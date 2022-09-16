@@ -2,6 +2,8 @@
 
 import numpy as np
 
+from constants import *
+
 
 # Mathematical function to output expected Torgue from an input current
 # Units are:
@@ -23,6 +25,11 @@ def calculated_torque_current(current):
 def calculated_RPM_current(current):
     rpm = (-4.114)*current + 888.5
     return rpm
+
+def calculated_speed_current(current):
+    rpm = calculated_RPM_current(current)
+    speed = rpm * WHEEL_CIRCUMFRENCE / SECONDS_PER_MINUTE
+    return speed
 
 
 # Mathematical function to output expected efficiency from an input current
