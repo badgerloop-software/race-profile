@@ -1,10 +1,21 @@
-# Configurable Constants
-TIME_RES = .1 # Seconds
-PROFILE_LENGTH = 5 # Seconds
-STARTING_KWH = 6.156 # 100% State of Charge
-FULL_PACK_KWH = 6.156 # kWh
-HV_PACK_VOLTAGE = 96 # Volts
+import numpy as np
 
 # Non-Configurable Constants
 SECONDS_PER_HOUR = 3600
+SECONDS_PER_MINUTE = 60
+INCH_TO_METER = 0.0254
+UNIT_TO_KILO = 1 / 1000
+
+# Configurable Constants
+TIME_RES = 10 # Seconds
+PROFILE_LENGTH = 4100 # Seconds
+HV_PACK_VOLTAGE = 96 # Volts
+HV_PACK_CAPACITY = 57 # Amp-hours
+WHEEL_DIAMETER_METERS = 16.75 * INCH_TO_METER # Meters
+
+# Dependant Constants
+WHEEL_CIRCUMFRENCE = WHEEL_DIAMETER_METERS * np.pi # Meters
+FULL_PACK_KWH = HV_PACK_VOLTAGE * HV_PACK_CAPACITY * UNIT_TO_KILO # kWh
+STARTING_KWH = FULL_PACK_KWH # 100% State of Charge
+
 
