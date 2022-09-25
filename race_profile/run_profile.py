@@ -1,3 +1,4 @@
+from turtle import end_fill
 import pandas as pd
 import numpy as np
 import argparse
@@ -7,17 +8,23 @@ from pathlib import Path
 
 import MotorData as motor
 
-def create_run_profile() -> pd.DataFrame:
-    df = setup_dataframe() # Always start with this
+def create_run_profile(fixedRun) -> pd.DataFrame:
+    df = setup_dataframe(fixedRun) # Always start with this
     return df # Must return a dataframe of the run profile
 
-def setup_dataframe() -> pd.DataFrame:
+def setup_dataframe(fixedRun) -> pd.DataFrame:
     """
     Setup the run profile dataframe with the correct timestamps
     """
     df = pd.DataFrame()
-    df['ts'] = np.arange(0, PROFILE_LENGTH, TIME_RES)
-    return df
+
+    if fixedRun == True:
+        df['ts'] = np.arange(0, PROFILE_LENGTH, TIME_RES)
+        return df
+    else:
+        df['ts'] = np.arange(0, LONG_TIME, TIME_RES)
+        return df
+
 
 def calculate_soc(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -82,13 +89,25 @@ def calculate_motor_cols(df: pd.DataFrame) -> pd.DataFrame:
     df = get_motor_speed(df)
     return df
 
+def trim_profile(df: pd.DataFrame) -> pd.DataFrame:
+    trim_index = 0
+    for i in range(1, len(df)):
+        if df.loc[i-1,'soc'] >= FINAL_KWH and df.loc[i,'soc'] <= FINAL_KWH:
+            trim_index = i
+            break
+    frame =  df[0 : trim_index+1 : 1]
+    return frame
 
 def main() -> None:
-    df = create_run_profile()
+    df = create_run_profile(FIXED_TIME_RUN)
     df = calculate_motor_cols(df)
     # df = calculate_range(df)
     df = calculate_power_draw(df)
     df = calculate_soc(df)
+
+    if FIXED_TIME_RUN == False:
+        df = trim_profile(df)
+
     print(df)
 
     print("Profile Length: {} seconds".format(len(df) * TIME_RES))
