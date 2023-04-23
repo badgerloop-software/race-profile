@@ -1,1 +1,1 @@
-Still working on using git with matlab but this folder will be the destination for the simulink version of the simulation.
+Work in Progress. Need to run Setup.m before simulation in order to load constants into file.
