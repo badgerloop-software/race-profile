@@ -7,6 +7,7 @@ INCH_TO_METER = 0.0254;
 UNIT_TO_KILO = 1 / 1000;
 LBF_TO_KG = 0.45359237;
 
+
 % Configurable Constants
 TIME_RES = 10; % Seconds
 PROFILE_LENGTH = 4000; % Seconds
