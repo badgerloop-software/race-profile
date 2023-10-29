@@ -19,13 +19,13 @@ CAR_MASS = 447.90 * LBF_TO_KG; % data from CarWeightCalc.xlsx
 DRIVER_MASS = 176 * LBF_TO_KG;
 AIR_DENSITY = 1.2; % kg m^-3
 FRONTAL_AREA = 1; %
-DRAG_COEFFICIENT = 0.1; % TEMPORARY until drag curve is derived (CFD)
+DRAG_COEFFICIENT = 0.15; % TEMPORARY until drag curve is derived (CFD)
 C_ROLLING_RESISTANCE = .0025;
 GRAVITY = 9.81; % gravitational acceleration m s^-2
 %MOTOR_CONSTANT = % CHECK THIS
 
 % Controls
-TARGET_SPEED = 15;
+TARGET_SPEED = 20; % Meters / Second
 P = 1;
 I = 0.01;
 D = 0.01;
@@ -37,7 +37,16 @@ FULL_PACK_KWH = HV_PACK_VOLTAGE * HV_PACK_CAPACITY * UNIT_TO_KILO; % kWh
 STARTING_KWH = FULL_PACK_KWH * (1 - 0.00); % 100% State of Charge
 TOTAL_MASS = CAR_MASS + DRIVER_MASS;
 
+% Low Voltage
+FAN_DRAW = 4.8; % Watts
+DRIVER_DISPLAY_DRAW = 2.5; % Watts
+HEADLIGHT_DRAW = 2; % Watts
+
 %% Data
+
+% Course Parameters, temporary until course data is included 
+DISTANCE = 1:1000; % distance traveled along course, should be meters
+SLOPE = zeros(size(DISTANCE)); % 
 
 % MOTOR
 % Motor Eco Mode data
@@ -55,6 +64,6 @@ INT_TORQUES_ECO = interp1(CURRENT_DATA_ECO, TORQUES_DATA_ECO, INT_CURRENTS,'spli
 % TIRE
 % Rolling Resitance Coefficient (RRC) data
 SPEED_DATA_TIRE = [50 80 100]; % km/h
-ROLLING_RESISTANCE = [2.30 2.68 3.02]; % unitless
+ROLLING_RESISTANCE = [2.30 2.68 3.02] / 1000; % unitless
 PRESSURE = 500 / UNIT_TO_KILO; % Pa
 
