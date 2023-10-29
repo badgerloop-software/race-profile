@@ -10,7 +10,9 @@ LBF_TO_KG = 0.45359237;
 
 % Configurable Constants
 TIME_RES = 10; % Seconds
-PROFILE_LENGTH = 4000; % Seconds
+START_TIME = 8*(SECONDS_PER_HOUR) + 0*(SECONDS_PER_MINUTE); % start time of day
+END_TIME = 16*(SECONDS_PER_HOUR) + 0*(SECONDS_PER_MINUTE); % end time of day
+PROFILE_LENGTH = START_TIME - END_TIME; % Seconds
 HV_PACK_VOLTAGE = 96; % Volts; TEMPORARY until voltage curve is derived
 HV_PACK_CAPACITY = 80; % 57 % Amp-hours
 WHEEL_DIAMETER_METERS = 16.75 * INCH_TO_METER; % Meters
