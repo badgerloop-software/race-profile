@@ -12,7 +12,7 @@ LBF_TO_KG = 0.45359237;
 TIME_RES = 10; % Seconds
 START_TIME = 9*(SECONDS_PER_HOUR) + 0*(SECONDS_PER_MINUTE); % start time of day
 END_TIME = 18*(SECONDS_PER_HOUR) + 0*(SECONDS_PER_MINUTE); % end time of day
-PROFILE_LENGTH = START_TIME - END_TIME; % Seconds
+PROFILE_LENGTH = END_TIME - START_TIME; % Seconds
 HV_PACK_VOLTAGE = 96; % Volts; TEMPORARY until voltage curve is derived
 HV_PACK_CAPACITY = 80; % 57 % Amp-hours
 WHEEL_DIAMETER_METERS = 16.75 * INCH_TO_METER; % Meters
@@ -48,9 +48,10 @@ HEADLIGHT_DRAW = 2; % Watts
 
 % Course Parameters, temporary until course data is included 
 DISTANCE = 1:1000e3; % distance traveled along course, should be meters
-GRADE_ANGLE = zeros(size(DISTANCE)); % INPUT COURSE HERE
+GRADE_ANGLE = (0.1)*ones(size(DISTANCE)); % INPUT COURSE HERE
 INT_DISTANCES = DISTANCE(1):0.25:DISTANCE(end);
 INT_GRADE_ANGLE = interp1(DISTANCE, GRADE_ANGLE, INT_DISTANCES,'spline');
+
 
 
 % MOTOR
