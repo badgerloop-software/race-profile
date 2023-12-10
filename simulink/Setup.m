@@ -27,10 +27,10 @@ GRAVITY = 9.81; % gravitational acceleration m s^-2
 %MOTOR_CONSTANT = % CHECK THIS
 
 % Controls
-TARGET_SPEED = 20; % Meters / Second
-P = 1;
-I = 0.01;
-D = 0.01;
+TARGET_SPEED = 0; % Meters / Second
+P = 0;
+I = 0;
+D = 0;
 
 % Dependant Constants
 WHEEL_CIRCUMFRENCE = WHEEL_DIAMETER_METERS * pi; % Meters
@@ -48,10 +48,9 @@ HEADLIGHT_DRAW = 2; % Watts
 
 % Course Parameters, temporary until course data is included 
 DISTANCE = 1:1000e3; % distance traveled along course, should be meters
-GRADE_ANGLE = (0.1)*ones(size(DISTANCE)); % INPUT COURSE HERE
+GRADE_ANGLE = (-0.1)*ones(size(DISTANCE)); % INPUT COURSE HERE
 INT_DISTANCES = DISTANCE(1):0.25:DISTANCE(end);
 INT_GRADE_ANGLE = interp1(DISTANCE, GRADE_ANGLE, INT_DISTANCES,'spline');
-
 
 
 % MOTOR
