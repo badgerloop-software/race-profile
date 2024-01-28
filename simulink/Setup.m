@@ -27,10 +27,10 @@ GRAVITY = 9.81; % gravitational acceleration m s^-2
 %MOTOR_CONSTANT = % CHECK THIS
 
 % Controls
-TARGET_SPEED = 0; % Meters / Second
-P = 0;
-I = 0;
-D = 0;
+TARGET_SPEED = 10; % Meters / Second
+P = 1;
+I = 0.01;
+D = 0.01;
 
 % Dependant Constants
 WHEEL_CIRCUMFRENCE = WHEEL_DIAMETER_METERS * pi; % Meters
@@ -47,8 +47,12 @@ HEADLIGHT_DRAW = 2; % Watts
 %% Data
 
 % Course Parameters, temporary until course data is included 
-DISTANCE = 1:1000e3; % distance traveled along course, should be meters
-GRADE_ANGLE = (-0.1)*ones(size(DISTANCE)); % INPUT COURSE HERE
+DISTANCE = [1:50e3, (1+50e3):100e3];% distance traveled along course, should be meters
+fronthalf = length(1:50e3);
+backhalf= length((1+50e3):100e3);
+GRADE_ANGLE = [0*ones(1,fronthalf), 0.02*ones(1,backhalf)];
+%GRADE_ANGLE(1, floor(length(DISTANCE)/2):end) = 0.1*ones(1, floor(length(DISTANCE)/2) + 1);
+% INPUT COURSE HERE
 INT_DISTANCES = DISTANCE(1):0.25:DISTANCE(end);
 INT_GRADE_ANGLE = interp1(DISTANCE, GRADE_ANGLE, INT_DISTANCES,'spline');
 
@@ -71,4 +75,10 @@ INT_TORQUES_ECO = interp1(CURRENT_DATA_ECO, TORQUES_DATA_ECO, INT_CURRENTS,'spli
 SPEED_DATA_TIRE = [50 80 100]; % km/h
 ROLLING_RESISTANCE = [2.30 2.68 3.02] / 1000; % unitless
 PRESSURE = 500 / UNIT_TO_KILO; % Pa
+
+% Solar Data
+% the data entered now is made up, to pull actual data from the internet
+TIMES = START_TIME:1:END_TIME;
+PROJECTED_IRRADIANCE = 800 * ones(size(TIMES));
+
 
