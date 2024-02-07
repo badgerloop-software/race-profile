@@ -1,9 +1,9 @@
 %% Route Manipulation:
 % Name of file to read:
-dirty_filename = "ASC2022_A_Dirty.txt";
+dirty_filename = "ASC2022_B_Dirty.txt";
 
 % Name of file to write to:
-clean_filename = "ASC2022_A.csv"; 
+clean_filename = "ASC2022_B.csv"; 
 
 % Read in data from file:
 T = readtable(dirty_filename);
