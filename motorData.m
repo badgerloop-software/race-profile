@@ -18,4 +18,4 @@ hold off
 
 % Format interpolated Data and save to file:
 T = table(interpedCurrents,interpedTorques, interpedRPMs,'VariableNames',["Current","Torque", "RPM"]);
-writetable(T, 'MotorDataEco.csv')
+writetable(T, 'Data/MotorDataEco.csv')
