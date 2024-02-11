@@ -22,13 +22,13 @@ CAR_MASS = 447.90 * LBF_TO_KG; % data from CarWeightCalc.xlsx
 DRIVER_MASS = 176 * LBF_TO_KG;
 AIR_DENSITY = 1.2; % kg m^-3
 FRONTAL_AREA = 1; % 
-DRAG_COEFFICIENT = 0.2; % TEMPORARY until drag curve is derived (CFD)
+DRAG_COEFFICIENT = 0.25; % TEMPORARY until drag curve is derived (CFD)
 C_ROLLING_RESISTANCE = .0025;
 GRAVITY = 9.81; % gravitational acceleration m s^-2
 %MOTOR_CONSTANT = % CHECK THIS
 
 % Controls
-TARGET_SPEED = 1000; % Meters / Second
+TARGET_SPEED = 10; % Meters / Second
 P = 1;
 I = 0.01;
 D = 0.01;
@@ -51,7 +51,7 @@ HEADLIGHT_DRAW = 2; % Watts
 DISTANCE = [1:50e3, (1+50e3):100e3];% distance traveled along course, should be meters
 fronthalf = length(1:50e3);
 backhalf= length((1+50e3):100e3);
-GRADE_ANGLE = [0*ones(1,fronthalf), 0.02*ones(1,backhalf)];
+GRADE_ANGLE = [0*ones(1,fronthalf), 0.03*ones(1,backhalf)];
 %GRADE_ANGLE(1, floor(length(DISTANCE)/2):end) = 0.1*ones(1, floor(length(DISTANCE)/2) + 1);
 % INPUT COURSE HERE
 INT_DISTANCES = DISTANCE(1):0.25:DISTANCE(end);
