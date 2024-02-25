@@ -80,8 +80,12 @@ Headlight_draw = 2;         % Watts
 
 
 %% Run Simulation:
-%sim("Car.slx")
+distance = sim("Car.slx")
 
 
 %% Save Data:
+
+
+
+
 
