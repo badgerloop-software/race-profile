@@ -16,7 +16,6 @@ PROFILE_LENGTH = END_TIME - START_TIME; % Seconds
 HV_PACK_VOLTAGE = 96; % Volts; TEMPORARY until voltage curve is derived
 HV_PACK_CAPACITY = 80; % 57 % Amp-hours
 WHEEL_DIAMETER_METERS = 22 * INCH_TO_METER; % Meters
-% r
 FINAL_KWH = 0; % KwH, battery level for variable time run to end
 CAR_MASS = 447.90 * LBF_TO_KG; % data from CarWeightCalc.xlsx
 DRIVER_MASS = 176 * LBF_TO_KG;
