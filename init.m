@@ -36,7 +36,6 @@
     Driver_display_draw = 2.5;  % Watts
     Headlight_draw = 2;         % Watts
 
-
 %% Load in data from sheets (constant values also included for testing):
 % Elevation data:
     Elevation_filename = 'Data/flat_course.csv';
@@ -92,11 +91,12 @@
     
 % Air Density
     density_filename        = 'Data/constDensity.csv';
+    Density                 = readtable(density_filename);
+    density_elevation       = Density.Elevation;
+    density                 = Density.density;
 
-    
-    
 %% Run Simulation:
-sim("Car.slx")
+%sim("Car.slx")
 
 
 %% Save Data:
