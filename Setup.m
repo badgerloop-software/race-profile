@@ -33,9 +33,12 @@ P = 1;
 I = 0.01;
 D = 0.01;
 
-%BMS
+%Battery Management System
 MAX_SOC = 0.99;
 MIN_SOC = 0.01;
+
+%Wether Data
+%TEMP = 
 
 % Dependant Constants
 WHEEL_CIRCUMFRENCE = WHEEL_DIAMETER_METERS * pi; % Meters
