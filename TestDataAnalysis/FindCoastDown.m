@@ -14,14 +14,39 @@ function FindCoastDown(inputfilename, outputfilename)
     end
 
     % Identify Coast Down regions
-    regionNum = 1;
+    isCoasting = (DATA.speed > 10) & (DATA.acceletator_pedal == 0);
+    % !!!!!!!!!!!ADD CONDITION TO ENSURE NOT BREAKING!!!!!!!!!!!!!
+    
+    % filter to coast downs that are of a certain length
+    numSeconds = 5;
+    unitConversion = 1000; % Timestamps are given in milliseconds
 
-    while true
-        % 
-
-        % Populate destination
-        regionNum = regionNum + 1;
+    % Find runs of adjacent true values in isCoasting
+    differences = diff([false; isCoasting; false]);
+    startIndices = find(differences == 1);
+    endIndices = find(differences == -1);
+    
+    % Filter isCoasting for runs lasting longer than numSeconds
+    isCoastingFiltered = false(size(isCoasting));
+    for i = 1:numel(startIndices)
+        endTime = DATA{endIndices(i),1};
+        startTime = DATA{startIndices(i),1};
+        if (endTime - startTime)/unitConversion > numSeconds
+            isCoastingFiltered(startIndices(i):endIndices(i)) = true;
+        end
     end
+
+    coastData = DATA(isCoasting, :);
+    
+    % while true
+    %     % 
+    % 
+    %     % Populate destination
+    %     regionNum = regionNum + 1;
+    % end
+
+    % plot(coastData.Var1, coastData.speed, '-*');
+    plot(isCoastingFiltered)
     
 
 end
