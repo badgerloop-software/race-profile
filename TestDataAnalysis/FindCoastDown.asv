@@ -1,0 +1,13 @@
+%% Cleans Coast Down Data
+% Jacob Petrie
+
+function FindCoastDown(inputfilename, outputfilename)
+    DATA = readtable(inputfilename);
+
+    % Create output Destination for outputs
+    folderName = extractBefore(ou)
+    % Identify Coast Down regions
+
+    % Populate destination
+
+end
