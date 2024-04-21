@@ -29,13 +29,25 @@ GRAVITY = 9.81; % gravitational acceleration m s^-2
 
 % Controls
 TARGET_SPEED = 10; % Meters / Second
-P = 1;
-I = 0.01;
-D = 0.01;
+SP = 1; %Speed P
+SI = 0.01; %Speed I
+SD = 0.01; %Speed D
+
+
+TARGET_POWER = 5; %kW
+PP = 1;
+PI = 0.01;
+PD = 0.01;
+
+%Speed-Power control switch
+%set_param('Car/Control/PW_SP_SW', 'sw', "1"); %power-control = 1, speed-control = 0
+PW_SP = 1;
+%1: power pid; 0: speed pid
+
 
 %Battery Management System
 MAX_SOC = 0.99;
-MIN_SOC = 0.01;
+MIN_SOC = 0.1;
 
 %Wether Data
 %TEMP = 
