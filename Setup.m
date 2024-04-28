@@ -28,15 +28,34 @@ GRAVITY = 9.81; % gravitational acceleration m s^-2
 
 % Controls
 TARGET_SPEED = 10; % Meters / Second
-P = 1;
-I = 0.01;
-D = 0.01;
+SP = 1; %Speed P
+SI = 0.01; %Speed I
+SD = 0.01; %Speed D
+
+
+TARGET_POWER = 5; %kW
+PP = 1;
+PI = 0.01;
+PD = 0.01;
+
+%Speed-Power control switch
+%set_param('Car/Control/PW_SP_SW', 'sw', "1"); %power-control = 1, speed-control = 0
+PW_SP = 1;
+%1: power pid; 0: speed pid
+
+
+%Battery Management System
+MAX_SOC = 0.99;
+MIN_SOC = 0.1;
+
+%Wether Data
+%TEMP = 
 
 % Dependant Constants
 WHEEL_CIRCUMFRENCE = WHEEL_DIAMETER_METERS * pi; % Meters
 WHEEL_RADIUS = WHEEL_DIAMETER_METERS / 2;
 FULL_PACK_KWH = HV_PACK_VOLTAGE * HV_PACK_CAPACITY * UNIT_TO_KILO; % kWh
-STARTING_KWH = FULL_PACK_KWH * (1 - 0.00); % 100% State of Charge
+STARTING_KWH = FULL_PACK_KWH * (1 - 0); % 100% State of Charge
 TOTAL_MASS = CAR_MASS + DRIVER_MASS;
 
 % Low Voltage
@@ -81,8 +100,8 @@ PRESSURE = 500 / UNIT_TO_KILO; % Pa
 TIMES = START_TIME:1:END_TIME;
 PROJECTED_IRRADIANCE = 800 * ones(size(TIMES));
 
-outputName = 'Outputs/results.csv';
-simulation = sim("Car.slx");
-out = simulation.logsout;
-resultsTable = out.extractTimetable;
-writetimetable(resultsTable, outputName)
+%outputName = 'Outputs/results.csv';
+%simulation = sim("Car.slx");
+%out = simulation.logsout;
+%resultsTable = out.extractTimetable;
+%writetimetable(resultsTable, outputName)
