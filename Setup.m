@@ -100,6 +100,7 @@ PRESSURE = 500 / UNIT_TO_KILO; % Pa
 TIMES = START_TIME:1:END_TIME;
 PROJECTED_IRRADIANCE = 800 * ones(size(TIMES));
 
+%%output
 outputName = 'Outputs/results.csv';
 simulation = sim("Car.slx");
 out = simulation.logsout;
