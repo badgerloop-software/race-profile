@@ -102,7 +102,7 @@
 
 %% Run Simulation:
 simulation = sim("Car.slx");
-out = simulation.extractTimetable;
+%out = extractTimetable(simulation);
 % 
 
 %% Save Data:
