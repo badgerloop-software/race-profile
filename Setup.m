@@ -1,3 +1,9 @@
+%% Data Sources
+% COURSE_DATA     = 
+% WEATHER_DATA    =
+ECO_DATA_FILE     = 'Data/MotorDataEco.csv';
+POWER_DATA_FILE   = 'Data/MotorDataEco.csv'; % Replace later
+
 %% Constants used for Car Sim
 
 % Non-Configurable Constants
@@ -24,6 +30,7 @@ FRONTAL_AREA = 1; %
 DRAG_COEFFICIENT = 0.25; % TEMPORARY until drag curve is derived (CFD)
 C_ROLLING_RESISTANCE = .0025;
 GRAVITY = 9.81; % gravitational acceleration m s^-2
+SPEED_TO_RPM = 60 / (WHEEL_DIAMETER_METERS * pi);
 %MOTOR_CONSTANT = % CHECK THIS
 
 % Controls
@@ -57,32 +64,48 @@ INT_DISTANCES = DISTANCE(1):0.25:DISTANCE(end);
 INT_GRADE_ANGLE = interp1(DISTANCE, GRADE_ANGLE, INT_DISTANCES,'spline');
 
 
-% MOTOR
+%% MOTOR
 % Motor Eco Mode data
-CURRENT_DATA_ECO = [0.780 1.37 2 3 4 5 6 8 10 12 14 16 18 20 25 30];
-TORQUES_DATA_ECO = [0 0.6 1.4 2.4 3.4 4.5 5.7 7.8 10.0 12.3 14.6 16.9 19.2 21.6 27.6 34.3];
-NO_TORQUE_CURRENT = CURRENT_DATA_ECO(1); % Assumes data set starts at zero
+ECO_DATA = readmatrix(ECO_DATA_FILE);
+% CURRENT_DATA_ECO = [0.780 1.37 2 3 4 5 6 8 10 12 14 16 18 20 25 30];
+% TORQUES_DATA_ECO = [0 0.6 1.4 2.4 3.4 4.5 5.7 7.8 10.0 12.3 14.6 16.9 19.2 21.6 27.6 34.3];
+% RPM_DATA_ECO     = 
+CURRENT_DATA_ECO = ECO_DATA(:, 1);
+TORQUES_DATA_ECO = ECO_DATA(:, 2);
+RPM_DATA_ECO     = ECO_DATA(:, 3);
 % Motor Important values
-MIN_CURRENT = min(CURRENT_DATA_ECO);
-MAX_CURRENT = max(CURRENT_DATA_ECO);
-MAX_TORQUE = max(TORQUES_DATA_ECO);
-% Motor Interpolation
-INT_CURRENTS = CURRENT_DATA_ECO(1):0.0001:CURRENT_DATA_ECO(end);
-INT_TORQUES_ECO = interp1(CURRENT_DATA_ECO, TORQUES_DATA_ECO, INT_CURRENTS,'spline');
+NO_TORQUE_CURRENT_ECO = CURRENT_DATA_ECO(1); % Assumes data set starts at zero
+MIN_CURRENT_ECO = min(CURRENT_DATA_ECO);
+MAX_CURRENT_ECO = max(CURRENT_DATA_ECO);
+MAX_TORQUE_ECO = max(TORQUES_DATA_ECO);
+MAX_RPM_ECO = max(RPM_DATA_ECO);
 
-% TIRE
+% Motor Power Mode data
+POWER_DATA = readmatrix(POWER_DATA_FILE);
+CURRENT_DATA_POWER = POWER_DATA(:, 1);
+TORQUES_DATA_POWER = POWER_DATA(:, 2);
+RPM_DATA_POWER     = POWER_DATA(:, 3);
+% Motor Important values
+NO_TORQUE_CURRENT_POWER = CURRENT_DATA_POWER(1); % Assumes data set starts at zero
+MIN_CURRENT_POWER = min(CURRENT_DATA_POWER);
+MAX_CURRENT_POWER = max(CURRENT_DATA_POWER);
+MAX_TORQUE_POWER = max(TORQUES_DATA_POWER);
+MAX_RPM_POWER = max(RPM_DATA_POWER);
+
+
+%% TIRE
 % Rolling Resitance Coefficient (RRC) data
 SPEED_DATA_TIRE = [50 80 100]; % km/h
 ROLLING_RESISTANCE = [2.30 2.68 3.02] / 1000; % unitless
 PRESSURE = 500 / UNIT_TO_KILO; % Pa
 
-% Solar Data
+%% Solar Data
 % the data entered now is made up, to pull actual data from the internet
 TIMES = START_TIME:1:END_TIME;
 PROJECTED_IRRADIANCE = 800 * ones(size(TIMES));
 
-outputName = 'Outputs/results.csv';
-simulation = sim("Car.slx");
-out = simulation.logsout;
-resultsTable = out.extractTimetable;
-writetimetable(resultsTable, outputName)
+% outputName = 'Outputs/results.csv';
+% simulation = sim("Car.slx");
+% out = simulation.logsout;
+% resultsTable = out.extractTimetable;
+% writetimetable(resultsTable, outputName)
