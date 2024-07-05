@@ -17,7 +17,7 @@ LBF_TO_KG = 0.45359237;
 % Configurable Constants
 TIME_RES = 10; % Seconds
 START_TIME = 9*(SECONDS_PER_HOUR) + 0*(SECONDS_PER_MINUTE); % start time of day
-END_TIME = 18*(SECONDS_PER_HOUR) + 0*(SECONDS_PER_MINUTE); % end time of day
+END_TIME = 20*(SECONDS_PER_HOUR) + 0*(SECONDS_PER_MINUTE); % end time of day
 PROFILE_LENGTH = END_TIME - START_TIME; % Seconds
 HV_PACK_VOLTAGE = 96; % Volts; TEMPORARY until voltage curve is derived
 HV_PACK_CAPACITY = 80; % 57 % Amp-hours
@@ -34,7 +34,7 @@ SPEED_TO_RPM = 60 / (WHEEL_DIAMETER_METERS * pi);
 %MOTOR_CONSTANT = % CHECK THIS
 
 % Controls
-TARGET_SPEED = 100; % Meters / Second
+TARGET_SPEED = 10; % Meters / Second
 ACCEL_TOLERANCE = 3;
 P = 5;
 I = 0.1;
@@ -55,10 +55,10 @@ HEADLIGHT_DRAW = 2; % Watts
 %% Data
 
 % Course Parameters, temporary until course data is included 
-DISTANCE = [1:50e3, (1+50e3):100e3];% distance traveled along course, should be meters
+DISTANCE = [1:50e3, (1+50e3):200e3];% distance traveled along course, should be meters
 fronthalf = length(1:50e3);
-backhalf= length((1+50e3):100e3);
-GRADE_ANGLE = [0*ones(1,fronthalf), 0.03*ones(1,backhalf)];
+backhalf= length((1+50e3):200e3);
+GRADE_ANGLE = -[0*ones(1,fronthalf), 0.03*ones(1,backhalf)];
 %GRADE_ANGLE(1, floor(length(DISTANCE)/2):end) = 0.1*ones(1, floor(length(DISTANCE)/2) + 1);
 % INPUT COURSE HERE
 INT_DISTANCES = DISTANCE(1):0.25:DISTANCE(end);
@@ -67,6 +67,7 @@ INT_GRADE_ANGLE = interp1(DISTANCE, GRADE_ANGLE, INT_DISTANCES,'spline');
 
 %% MOTOR
 % Motor Eco Mode data
+REGEN_ON = 0;
 ECO_DATA = readmatrix(ECO_DATA_FILE);
 % CURRENT_DATA_ECO = [0.780 1.37 2 3 4 5 6 8 10 12 14 16 18 20 25 30];
 % TORQUES_DATA_ECO = [0 0.6 1.4 2.4 3.4 4.5 5.7 7.8 10.0 12.3 14.6 16.9 19.2 21.6 27.6 34.3];
