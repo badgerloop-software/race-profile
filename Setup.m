@@ -35,22 +35,17 @@ SPEED_TO_RPM = 60 / (WHEEL_DIAMETER_METERS * pi);
 
 % Controls
 CONTROL_MODE = 1;   % power-control = 1, speed-control = 0
-TARGET_SPEED = 10; % Meters / Second
-ACCEL_TOLERANCE = 3;
-SP = 1; %Speed P
-SI = 0.01; %Speed I
-SD = 0.01; %Speed D
 
-TARGET_POWER = 5; %kW
-PP = 1;
-PI = 0.01;
-PD = 0.01;
+TARGET_SPEED = 20; % Meters / Second
+ACCEL_TOLERANCE = 1;
+P_SPEED = 1;    % Speed P
+I_SPEED = 0.01; % Speed I
+D_SPEED = 0.01; % Speed D
 
-%Speed-Power control switch
-%set_param('Car/Control/PW_SP_SW', 'sw', "1"); %power-control = 1, speed-control = 0
-PW_SP = 1;
-%1: power pid; 0: speed pid
-
+TARGET_POWER = 500; %kW
+P_POWER = 1;
+I_POWER = 0.01;
+D_POWER = 0.01;
 
 %Battery Management System
 MAX_SOC = 0.99;
@@ -86,7 +81,7 @@ INT_GRADE_ANGLE = interp1(DISTANCE, GRADE_ANGLE, INT_DISTANCES,'spline');
 
 %% MOTOR
 % Motor Eco Mode data
-REGEN_ON = 0;
+REGEN_ON = 1;
 ECO_DATA = readmatrix(ECO_DATA_FILE);
 % CURRENT_DATA_ECO = [0.780 1.37 2 3 4 5 6 8 10 12 14 16 18 20 25 30];
 % TORQUES_DATA_ECO = [0 0.6 1.4 2.4 3.4 4.5 5.7 7.8 10.0 12.3 14.6 16.9 19.2 21.6 27.6 34.3];
@@ -126,8 +121,8 @@ PRESSURE = 500 / UNIT_TO_KILO; % Pa
 
 %% Solar Data
 % the data entered now is made up, to pull actual data from the internet
-TIMES = START_TIME:1:END_TIME;
-PROJECTED_IRRADIANCE = 800 * ones(size(TIMES));
+TIMES = START_TIME:900:END_TIME;
+PROJECTED_IRRADIANCE = -50*((TIMES-START_TIME).*(TIMES-END_TIME) / (PROFILE_LENGTH/2)^2);%100 * ones(size(TIMES));
 
 % outputName = 'Outputs/results.csv';
 % simulation = sim("Car.slx");
