@@ -1,6 +1,6 @@
 %% Data Sources
 % COURSE_DATA     = 
-% WEATHER_DATA    =
+% WEATHER_DATA    = 
 ECO_DATA_FILE     = 'Data/MotorDataEco.csv';
 POWER_DATA_FILE   = 'Data/MotorDataEco.csv'; % Replace later
 
