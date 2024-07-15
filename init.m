@@ -26,11 +26,11 @@
     CAR_MASS = 447.90 * LBF_TO_KG;  % data from CarWeightCalc.xlsx
     DRIVER_MASS = 176 * LBF_TO_KG;  % driver plus ballast
     TOTAL_MASS = CAR_MASS + DRIVER_MASS; % total mass of the vehicle
-
+    
 % Dimensions
     WHEEL_DIAMETER_METERS = 22 * INCH_TO_METER;
     FRONTAL_AREA = 1.262;   % meters^2, Source: Ben Colby
-
+    CAR_LENGTH = 2; %**placeholder,TBD
 % Misc Electronics
     Fan_draw = 4.8;             % Watts
     Driver_display_draw = 2.5;  % Watts
