@@ -1,4 +1,5 @@
 # python
+# Combine all filtered CSV files into one DataFrame.
 import os
 import glob
 import pandas as pd

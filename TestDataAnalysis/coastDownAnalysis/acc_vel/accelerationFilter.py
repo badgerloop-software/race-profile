@@ -1,4 +1,5 @@
 # python
+# Filters data from coastdown tests to maintain a downward trend in acceleration.
 import os
 import glob
 import pandas as pd
