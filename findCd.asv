@@ -3,15 +3,14 @@ function Cd = calculate_Cd(speed, air_density, viscosity)
     %
     % Inputs:
     %   speed: vehicle speed (m/s)
-    %   Use airParams to find:
-    %       air_density: air density (g/m^3)
-    %       viscosity: air viscosity (kg/(m*s))
+    %   air_density: air density (g/m^3)
+    %   viscosity: air viscosity (kg/(m*s))
     %
     % Output:
     %   Cd: Drag coefficient
 
     % Define characteristic length
-    characteristic_length = 5;  % m **NEED TO CHECK**
+    characteristic_length = 5;  % m
 
     % Convert air density from g/m^3 to kg/m^3
     air_density = air_density / 1000;

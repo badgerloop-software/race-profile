@@ -5,8 +5,7 @@ function [density, viscosity] = airParams(temperature, pressure, humidity)
 % Convert Units
 hecto       = 100;              % Solcast gives pressures in hPa
 pressure    = pressure * hecto; % Convert hPa -> Pa
-% **conflict variable name here. Should we name the input variable as
-% PRESSURE?
+
 tempK       = temperature + 273.15; % Convert C -> K
 
 % Useful values
