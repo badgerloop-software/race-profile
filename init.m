@@ -6,6 +6,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+function out = init(configFileName, outputFileName)
+%% Data Extraction
+    inputData = readtable(configFileName, ReadRowNames=true)
+
+
 %% Unit Conversions:
     SECONDS_PER_HOUR = 3600;
     SECONDS_PER_MINUTE = 60;
@@ -107,7 +112,7 @@ simulation = sim("Car.slx");
 
 %% Save Data:
 
-
+end
 
 
 
