@@ -65,11 +65,11 @@ HV_PACK_VOLTAGE = 96  # Volts; TEMPORARY until voltage curve is derived
 HV_PACK_CAPACITY = 80  # 57 # Amp-hours
 FULL_PACK_KWH = HV_PACK_VOLTAGE * HV_PACK_CAPACITY * UNIT_TO_KILO  # kWh
 STARTING_KWH = FULL_PACK_KWH * (1 - 0.00)  # 100% State of Charge
-# battery_filename = 'Data/const_battery.csv'
+battery_filename = 'Data/const_battery.csv'
 # # battery_filename = ''
-# Battery = readtable(battery_filename)
-# SOC = Battery.SOC
-# voltage = Battery.Voltage
+Battery = pd.read_csv(battery_filename)
+SOC = Battery.SOC
+voltage = Battery.Voltage
 
 
 # Tire Data
