@@ -50,6 +50,8 @@ D_POWER = 0.01;
 %Battery Management System
 MAX_SOC = 0.99;
 MIN_SOC = 0.1;
+PACK_TEMP = 40; %celcius
+PACK_TEMP_MAX = 70;
 
 %Wether Data
 %TEMP = 
