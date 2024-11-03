@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Hey team! This guide will walk you through how to get telemetry data from our solar race car into MATLAB for analysis. Whether you're working on vehicle dynamics, power systems, or just want to analyze race performance, this guide has you covered.
+Hey team! This guide will walk you through how to get telemetry data from our solar race car into MATLAB for analysis. 
 
 ## Project Structure
 
