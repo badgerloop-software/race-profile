@@ -127,5 +127,6 @@ density = Density.density
 # We will run our simulation, take the resulting data and output this, ideally as a CSV.
 # simulation = sim("Car.slx")
 # out = extractTimetable(simulation)
+# out.to_csv("output.csv")
 
 # Save Data:
