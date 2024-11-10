@@ -1,89 +1,107 @@
+import redis
+import pandas as pd
+import numpy as np
+import matlab.engine
 import time
-from scipy.io import savemat
-import asyncio
+from typing import List, Dict, Any
 
-# Vehicle Dynamics
-DYNAMICS_PARAMS = [
-    'speed',              # mph
-    'accelerator_pedal',  # %
-    'foot_brake',        # boolean
-    'regen_brake',       # %
-]
-
-# Power System
-POWER_PARAMS = [
-    'pack_voltage',      # V
-    'pack_current',      # A
-    'pack_power',        # W
-    'motor_power',       # W
-    'motor_current',     # A
-]
-
-# Thermal Management
-THERMAL_PARAMS = [
-    'pack_temp',         # degC
-    'motor_temp',        # degC
-    'air_temp',         # degC
-]
-
-# Solar Array
-SOLAR_PARAMS = [
-    'string1_V_in',      # V
-    'string1_I_in',      # A
-    'string1_temp',      # degC
-    # ... other strings
-]
-
-
-async def fetch_telemetry_dataset(param_list, start_time, end_time):
+class SimulinkTelemetryHandler:
     """
-    Fetches a set of parameters for a given time window
-
-    Args:
-        param_list: List of parameter names from the database
-        start_time: Unix timestamp in milliseconds
-        end_time: Unix timestamp in milliseconds or '+' for current time
+    Handles telemetry data pipeline between Redis database and Simulink model.
     """
-    # All parameters use 'AVG' aggregation for now
-    agg_methods = ['AVG'] * len(param_list)
+    def __init__(self, redis_host='localhost', redis_port=6379):
+        # Initialize Redis connection
+        self.redis_client = redis.Redis(host=redis_host, port=redis_port)
+        # Start MATLAB engine with Simulink support
+        self.matlab_eng = matlab.engine.start_matlab()
+        # Load Simulink libraries
+        self.matlab_eng.eval('load_system(\'simulink\')', nargout=0)
+    
+    async def fetch_telemetry_dataset(self, param_list: List[str], start_time: int, end_time: int) -> pd.DataFrame:
+        """Fetches time series data from Redis"""
+        data = {}
+        for param in param_list:
+            values = self.redis_client.xrange(param, 
+                                           min=str(start_time), 
+                                           max=str(end_time) if end_time != '+' else '+')
+            
+            timestamps = []
+            measurements = []
+            for entry in values:
+                timestamp = int(entry[0].decode('utf-8').split('-')[0])
+                value = float(entry[1][b'value'])
+                timestamps.append(timestamp)
+                measurements.append(value)
+                
+            data[param] = measurements
+            
+        return pd.DataFrame(data, index=timestamps)
 
-    try:
-        df = await query(param_list, start_time, end_time, agg_methods)
-        return df
-    except Exception as e:
-        print(f"Error fetching data: {e}")
-        return None
+    async def update_simulink_model(self, df: pd.DataFrame, model_name: str, block_paths: Dict[str, str]):
+        """
+        Updates Simulink model parameters with telemetry data
+        
+        Args:
+            df: pandas DataFrame with telemetry data
+            model_name: Name of Simulink model (.slx file)
+            block_paths: Dict mapping parameter names to Simulink block paths
+        """
+        try:
+            # Load Simulink model
+            self.matlab_eng.eval(f"load_system('{model_name}')", nargout=0)
+            
+            # Update each parameter in the model
+            for param, block_path in block_paths.items():
+                if param in df.columns:
+                    # Convert data to MATLAB array
+                    mat_data = matlab.double(df[param].tolist())
+                    # Set block parameter
+                    self.matlab_eng.set_param(block_path, 'Value', mat_data, nargout=0)
+            
+            # Update model
+            self.matlab_eng.eval('set_param(gcs, \'SimulationCommand\', \'update\')', nargout=0)
+            
+        except Exception as e:
+            print(f"Error updating Simulink model: {str(e)}")
+            raise
 
+    async def run_simulation(self, time_window_minutes: int = 60):
+        """
+        Main workflow: collects telemetry and updates Simulink simulation
+        """
+        end_time = '+'
+        start_time = round((time.time() - (time_window_minutes * 60)) * 1000)
 
-async def collect_simulation_data(time_window_minutes=60):
-    """
-    Collects all necessary data for simulation
-    """
-    # Calculate time window
-    end_time = '+'  # current time
-    start_time = round((time.time() - (time_window_minutes * 60)) * 1000)
+        # Define parameter mapping to Simulink blocks
+        block_paths = {
+            'temperature': 'model_name/Temperature_Input',
+            'pressure': 'model_name/Pressure_Input',
+            'flow_rate': 'model_name/FlowRate_Input'
+        }
 
-    # Collect all parameter groups
-    datasets = {}
-    for name, params in [
-        ('dynamics', DYNAMICS_PARAMS),
-        ('power', POWER_PARAMS),
-        ('thermal', THERMAL_PARAMS),
-        ('solar', SOLAR_PARAMS)
-    ]:
-        df = await fetch_telemetry_dataset(params, start_time, end_time)
-        if df is not None:
-            datasets[name] = df
+        try:
+            df = await self.fetch_telemetry_dataset(
+                param_list=list(block_paths.keys()),
+                start_time=start_time,
+                end_time=end_time
+            )
 
-    # Save to MATLAB format
-    matlab_dict = {}
-    for category, df in datasets.items():
-        for column in df.columns:
-            # Create valid MATLAB variable names
-            matlab_name = f"{category}_{column}"
-            matlab_dict[matlab_name] = df[column].values
+            if df is not None:
+                await self.update_simulink_model(df, 'your_model.slx', block_paths)
+                # Run simulation
+                self.matlab_eng.eval('set_param(gcs, \'SimulationCommand\', \'start\')', nargout=0)
+                return True
+            return False
+            
+        except Exception as e:
+            print(f"Simulation error: {str(e)}")
+            return False
 
-        # Add timestamp
-        matlab_dict[f"{category}_time"] = df.index.values
-
-    savemat('simulation_data.mat', matlab_dict)
+    def cleanup(self):
+        """Closes connections and releases resources"""
+        try:
+            self.matlab_eng.eval('close_system(gcs)', nargout=0)
+        except:
+            pass
+        self.redis_client.close()
+        self.matlab_eng.quit()
