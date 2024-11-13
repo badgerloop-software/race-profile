@@ -1,3 +1,6 @@
+"""
+Take telemetry data and convert it into a format suitable for simulation.
+"""
 from typing import Dict, Optional
 import numpy as np
 from scipy.io import savemat

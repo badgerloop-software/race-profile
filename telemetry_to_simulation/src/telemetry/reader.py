@@ -1,3 +1,6 @@
+"""
+Read telemetry data from Redis and provide access to the data in a structured format.
+"""
 import redis
 import pandas as pd
 import json
