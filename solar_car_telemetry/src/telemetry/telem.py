@@ -1,3 +1,8 @@
+"""
+Read telemetry data from Redis and 
+provide access to the data in a structured
+format for the simulation.
+"""
 import redis
 import pandas as pd
 import numpy as np
