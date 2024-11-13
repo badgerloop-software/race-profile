@@ -5,15 +5,42 @@ This project provides tools to fetch telemetry data from our solar race car and 
 ## Project Structure
 
 ```
-telemetry_to_simulation/
+solar_car_telemetry/
+│
 ├── src/
+│   ├── __init__.py
 │   ├── config/
-│   │   └── settings.py         # Configuration and parameter definitions
-│   └── telemetry/
-│       └── simulation_converter.py  # Converts telemetry for simulation
-├── examples/
-│   └── simulation_example.m    # Example MATLAB analysis script
-└── README.md
+│   │   ├── __init__.py
+│   │   ├── constants.py        # Move constants from init.py here
+│   │   └── simulation_config.py # Simulation-specific parameters
+│   │
+│   ├── data_handlers/
+│   │   ├── __init__.py
+│   │   ├── redis_handler.py    # Your telemetry.py will go here
+│   │   └── simulink_prep.py    # Prepare data for Simulink
+│   │
+│   └── utils/
+│       ├── __init__.py
+│       └── unit_conversions.py  # Unit conversion functions
+│
+├── data/
+│   ├── raw/                    # Your CSV files
+│   │   ├── flat_course.csv
+│   │   ├── const_solar.csv
+│   │   ├── const_drag.csv
+│   │   ├── const_battery.csv
+│   │   ├── MotorDataEco.csv
+│   │   ├── constTargetSpeed.csv
+│   │   └── constDensity.csv
+│   │
+│   └── processed/              # For processed telemetry data
+│
+├── simulink/                   # Simulink related files
+│   └── Car.slx
+│
+├── requirements.txt
+├── init.py                     # Your existing init file
+└── main.py                     # Main script to run everythingdd
 ```
 
 ## Features
