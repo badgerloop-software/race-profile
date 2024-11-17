@@ -18,7 +18,10 @@ redis_client.set('user:name', 'John Doe')
 
 # Get a string value
 name = redis_client.get('user:name')
-print(name)  # Output: John Doe
+print(f"user:name = {name}")
 
-# Set with expiration (in seconds)
-redis_client.setex('temporary_key', 5, 'This will disappear in 5 seconds')
+# Sample keys from the Redis database and print their values
+cursor, keys = redis_client.scan()
+for key in keys:
+    value = redis_client.get(key)
+    print(f"{key} = {value}")
