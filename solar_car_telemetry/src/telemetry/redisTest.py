@@ -1,27 +1,38 @@
-"""
-This file will just connect and read to the redis server.
-"""
-from redis import Redis
+import redis
+import pandas as pd
+import json
+redis_host = 'localhost'
+redis_port = 6379
 
-# Create a connection
-redis_client = Redis(
-    host='localhost',    # Redis server host
-    port=6379,          # Default Redis port
-    decode_responses=True  # Automatically decode responses to Python strings
-)
+def redis_string():
+    try:
+        r = redis.StrictRedis(host = redis_host, port = redis_port, decode_responses=True)
+        r.set('foo', 'bar')
+        msg = r.get('foo')
+        print(msg)
+    except Exception as e:
+        print(e)
 
-# Test connection
-redis_client.ping()  # Should return True if connected
+def redis_integer():
+    try:
+        r = redis.StrictRedis(host = redis_host, port = redis_port, decode_responses=True)
+        r.set('foo', 1)
+        msg = r.get('foo')
+        r.incr('foo')
+        msg_incr = r.get('foo')
+        print(msg)
+        print(msg_incr)
+    except:
+        print("Something went wrong!")
+def print_variables():
+    try:
+        r = redis.StrictRedis(host = redis_host, port = redis_port, decode_responses=True)
+        keys = r.keys()
+        values = r.mget(keys)
+        for key in keys:
+            print(f"{key}, {values[keys.index(key)]}")
+    except Exception as e:
+        print(e)
 
-# Set a string value
-redis_client.set('user:name', 'John Doe')
-
-# Get a string value
-name = redis_client.get('user:name')
-print(f"user:name = {name}")
-
-# Sample keys from the Redis database and print their values
-cursor, keys = redis_client.scan()
-for key in keys:
-    value = redis_client.get(key)
-    print(f"{key} = {value}")
+if __name__ == '__main__':
+    print_variables()
