@@ -29,8 +29,19 @@ def print_variables():
         r = redis.StrictRedis(host = redis_host, port = redis_port, decode_responses=True)
         keys = r.keys()
         values = r.mget(keys)
-        for key in keys:
-            print(f"{key}, {values[keys.index(key)]}")
+
+        dataList = []
+        valueList = []
+        for key in keys:           
+            dataList.append(key)
+            valueList.append(values[keys.index(key)])
+            #print(f"{key}")
+            #print(f"{key}, {values[keys.index(key)]})"
+        
+        df = pd.DataFrame(dataList, valueList)
+        df = df.sort_values(by=[0])
+        df.to_csv('Data/parameter_list.csv', index=False)
+        
     except Exception as e:
         print(e)
 
