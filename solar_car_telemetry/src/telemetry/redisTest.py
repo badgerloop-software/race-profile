@@ -38,9 +38,9 @@ def print_variables():
             #print(f"{key}")
             #print(f"{key}, {values[keys.index(key)]})"
         
-        df = pd.DataFrame(dataList, valueList)
-        df = df.sort_values(by=[0])
-        df.to_csv('Data/parameter_list.csv', index=False)
+        df = pd.DataFrame({'telem_variables': dataList, 'data': valueList})
+        df = df.sort_values(by=['telem_variables'])
+        df.to_csv('solar_car_telemetry/src/telemetry/Data/parameter_list.csv', index=False)
         
     except Exception as e:
         print(e)
