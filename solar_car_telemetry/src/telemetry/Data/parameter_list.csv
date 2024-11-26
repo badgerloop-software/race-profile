@@ -150,6 +150,7 @@ thermistor_b_value_table_invalid,
 thermistor_fault,
 use_dcdc,
 use_supp,
+user:name,John Doe
 voltage_failsafe,
 weak_cell_fault,
 weak_pack_fault,
