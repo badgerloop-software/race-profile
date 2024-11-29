@@ -1,3 +1,7 @@
+#
+#  This project is a work in progress, disregard this Readme for the time being. It is not completeley accurate.
+#
+
 # Telemetry to Simulation Integration
 
 This project provides tools to fetch telemetry data from our solar race car and prepare it for use in our Simulink simulation model (Car.slx).
