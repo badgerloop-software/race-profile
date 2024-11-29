@@ -5,6 +5,7 @@ It originated from a Matlab file called init.m.
 
 import pandas as pd
 import numpy as np
+import constants as const
 
 def load_data():
     # ELEVATION DATA - from flat_course.csv
@@ -22,7 +23,7 @@ def load_data():
     Drag = pd.read_csv('Data/const_drag.csv')
     speeds = Drag.velocity
     C_RR = 0.0017 * np.exp(0.0054 * speeds)  # SOURCE: Ben Colby
-    PRESSURE = 500 / UNIT_TO_KILO  # Pa, tire pressure
+    PRESSURE = 500 / const.UNIT_TO_KILO  # Pa, tire pressure
 
     # BATTERY DATA - from const_battery.csv
     Battery = pd.read_csv('Data/const_battery.csv')

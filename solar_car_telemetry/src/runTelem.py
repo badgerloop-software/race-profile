@@ -9,6 +9,7 @@ import numpy as np
 #import matlab.engine
 import time
 from typing import List, Dict, Any
+import redisExtract as re
 
 class SimulinkTelemetryHandler:
     """

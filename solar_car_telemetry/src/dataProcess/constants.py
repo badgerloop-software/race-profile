@@ -2,6 +2,7 @@
 This file contains all the relevant constants used in the simulation.
 It originated from a Matlab file called init.m.
 """
+import numpy as np
 
 # UNIT CONVERSIONS
 SECONDS_PER_HOUR = 3600
