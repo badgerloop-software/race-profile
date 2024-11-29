@@ -10,7 +10,13 @@ def loadIntoPandas(csv_filename):
     Given a csv file, load data into a Pandas dataframe.
     """
     df1 = pd.read_csv(csv_filename)
-    return df1
+    return df1 
+
+def extractDFfromTimeSeries():
+    """
+    Extract data from the time series data and return a Pandas dataframe.
+    """
+    pass
 
 def findAvgValue(dfp):
     """
