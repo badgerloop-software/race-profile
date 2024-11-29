@@ -1,10 +1,10 @@
 #
-#  This project is a work in progress, disregard this Readme for the time being. It is not completeley accurate.
+#  This project is a work in progress, disregard this Readme for the time being. It is not completely accurate.
 #
 
 # Telemetry to Simulation Integration
 
-This project provides tools to fetch telemetry data from our solar race car and prepare it for use in our Simulink simulation model (Car.slx).
+This project will allow us to fetch telemetry data from our solar race car and prepare it for use in our Simulink simulation model (Car.slx).
 
 ## Project Structure
 
@@ -14,37 +14,34 @@ solar_car_telemetry/
 ├── src/
 │   ├── __init__.py
 │   ├── config/
+│   │   └── settings.py
+│   │
+│   ├── dataProcess/
+│   │   ├── dataProcess/
+|   │   │   └── testData/
+|   |   │       ├── battery_const.csv
+|   |   |       ├── drag_const.csv
+|   |   |       ├── parameter_list.csv
+|   |   |       └── speeds.csv
 │   │   ├── __init__.py
-│   │   ├── constants.py        # Move constants from init.py here
-│   │   └── simulation_config.py # Simulation-specific parameters
+│   │   ├── constants.py
+│   │   ├── data_loader.py
+│   │   └── dataProcess.py
 │   │
-│   ├── data_handlers/
+│   ├── redisExtract/
 │   │   ├── __init__.py
-│   │   ├── redis_handler.py    # Your telemetry.py will go here
-│   │   └── simulink_prep.py    # Prepare data for Simulink
+│   │   └── redisExtract.py
 │   │
-│   └── utils/
-│       ├── __init__.py
-│       └── unit_conversions.py  # Unit conversion functions
-│
-├── data/
-│   ├── raw/                    # Your CSV files
-│   │   ├── flat_course.csv
-│   │   ├── const_solar.csv
-│   │   ├── const_drag.csv
-│   │   ├── const_battery.csv
-│   │   ├── MotorDataEco.csv
-│   │   ├── constTargetSpeed.csv
-│   │   └── constDensity.csv
+│   ├── simulinkPlugin/
+│   │   ├── __init__.py
+│   │   └── simulinkPlugin.py
 │   │
-│   └── processed/              # For processed telemetry data
+│   ├── toolTesting/
+│   │   └── redisTest.py
+│   │
+│   └── runTelem.py  # Main script to run everything
 │
-├── simulink/                   # Simulink related files
-│   └── Car.slx
-│
-├── requirements.txt
-├── init.py                     # Your existing init file
-└── main.py                     # Main script to run everythingdd
+└── README.md
 ```
 
 ## Features
