@@ -1,5 +1,5 @@
 # Race Strategy
-We are building a race car, and we want to drive wisely. Thus came the ultimate mission of the race strategy team: we find the **optimal** driving strategy to unleash the car's full potential.
+We are building a solar  race car, and we want to drive wisely. Thus came the ultimate mission of the race strategy team: we find the **optimal driving strategy** to unleash the car's full potential.
 
 These are the following things that are a work-in-progress:
 
