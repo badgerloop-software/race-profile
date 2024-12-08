@@ -2,7 +2,7 @@
 Try to connect to Simulink and send data to it through TCP/IP Connection. 
 If the connection is successful, launch the Simulink model.
 """
-import socket, struct
+import socket
 import matlab.engine as m
 
 TCP_IP = 'localhost'
