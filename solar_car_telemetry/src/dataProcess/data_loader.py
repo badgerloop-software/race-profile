@@ -46,7 +46,7 @@ def load_data():
     density_elevation = Density.Elevation
     density = Density.density
 
-    print(density)
+    print(Battery)
 
     return {
         'course': Course,
@@ -58,3 +58,6 @@ def load_data():
         'density': Density,
         'c_rr': C_RR
     }
+
+if __name__ == '__main__':
+    load_data()
