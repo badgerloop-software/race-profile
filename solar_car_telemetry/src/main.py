@@ -4,44 +4,25 @@ provide access to the data in a structured
 format for the simulation.
 """
 import redis
-import pandas as pd
-import numpy as np
-#import matlab.engine
-import time
-from typing import List, Dict, Any
-import redisExtract as re
+from redisExtract import extractVars
 
-class SimulinkTelemetryHandler:
+def main():
     """
-    Handles telemetry data pipeline between Redis database and Simulink model.
+    Handle telemetry data pipeline between Redis database and Simulink model.
     """
-    def __init__(self, redis_host='localhost', redis_port=6379):
-        # Initialize Redis connection
-        self.redis_client = redis.Redis(host=redis_host, port=redis_port)
-        # # Start MATLAB engine with Simulink support
-        # self.matlab_eng = matlab.engine.start_matlab()
-        # # Load Simulink libraries
-        # self.matlab_eng.eval('load_system(\'simulink\')', nargout=0)
+
+    #Initialize list of desired parameters to request
+    desired_params = ['speed', 'pack_voltage', 'headlights_led_en', 'motor_current', 'fan_speed', 'air_temp', 'pack_power', 'soc']
     
-    async def fetch_telemetry_dataset(self, param_list: List[str], start_time: int, end_time: int) -> pd.DataFrame:
-        """Fetches time series data from Redis"""
-        data = {}
-        for param in param_list:
-            values = self.redis_client.xrange(param, 
-                                           min=str(start_time), 
-                                           max=str(end_time) if end_time != '+' else '+')
-            
-            timestamps = []
-            measurements = []
-            for entry in values:
-                timestamp = int(entry[0].decode('utf-8').split('-')[0])
-                value = float(entry[1][b'value'])
-                timestamps.append(timestamp)
-                measurements.append(value)
-                
-            data[param] = measurements
-            
-        return pd.DataFrame(data, index=timestamps)
+    extractVars.print_variables()
+    #extractVars.redis_get_variables()
+
+    # Start MATLAB engine with Simulink support
+    # self.matlab_eng = matlab.engine.start_matlab()
+    # # Load Simulink libraries
+    # self.matlab_eng.eval('load_system(\'simulink\')', nargout=0)
+
+    
 
     # async def update_simulink_model(self, df: pd.DataFrame, model_name: str, block_paths: Dict[str, str]):
     #     """
@@ -103,11 +84,16 @@ class SimulinkTelemetryHandler:
     #         print(f"Simulation error: {str(e)}")
     #         return False
 
-    def cleanup(self):
-        """Closes connections and releases resources"""
+    #def cleanup(self):
+    #    """Closes connections and releases resources"""
         # try:
         #     self.matlab_eng.eval('close_system(gcs)', nargout=0)
         # except:
         #     pass
-        self.redis_client.close()
+        #self.redis_client.close()
         # self.matlab_eng.quit()
+
+
+
+if __name__ == "__main__":
+    main()
