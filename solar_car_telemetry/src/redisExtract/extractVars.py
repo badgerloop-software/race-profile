@@ -1,4 +1,4 @@
-import redis
+import redis, config
 import pandas as pd
 import json
 redis_host = 'localhost'
@@ -8,7 +8,7 @@ redis_port = 6379
 
 def print_variables():
     try:
-        r = redis.StrictRedis(host = redis_host, port = redis_port, decode_responses=True)
+        r = redis.StrictRedis(host = config.REDIS_URL, port = config.REDIS_PORT, db = config.REDIS_DB, decode_responses=True)
         keys = r.keys()
         values = r.mget(keys)
 

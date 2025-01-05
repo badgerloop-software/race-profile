@@ -1,47 +1,42 @@
-#
-#  This project is a work in progress, disregard this Readme for the time being. It is not completely accurate.
-#
-
 # Telemetry to Simulation Integration
 
-This project will allow us to fetch telemetry data from our solar race car and prepare it for use in our Simulink simulation model (Car.slx).
+This project will enable us to fetch telemetry data from our solar race car and prepare it for use in our Simulink simulation model (Car.slx).
 
 ## Project Structure
 
 ```
-solar_car_telemetry/
-│
-├── src/
-│   ├── __init__.py
-│   ├── config/
-│   │   └── settings.py
-│   │
-│   ├── dataProcess/
-│   │   ├── dataProcess/
-|   │   │   └── testData/
-|   |   │       ├── battery_const.csv
-|   |   |       ├── drag_const.csv
-|   |   |       ├── parameter_list.csv
-|   |   |       └── speeds.csv
-│   │   ├── __init__.py
-│   │   ├── constants.py
-│   │   ├── data_loader.py
-│   │   └── dataProcess.py
-│   │
-│   ├── redisExtract/
-│   │   ├── __init__.py
-│   │   └── redisExtract.py
-│   │
-│   ├── simulinkPlugin/
-│   │   ├── __init__.py
-│   │   └── simulinkPlugin.py
-│   │
-│   ├── toolTesting/
-│   │   └── redisTest.py
-│   │
-│   └── runTelem.py  # Main script to run everything
-│
-└── README.md
+├── README.md
+└── src
+    ├── config
+    │   └── settings.py
+    ├── dataProcess
+    │   ├── constants.py
+    │   ├── data_loader.py
+    │   ├── dataProcess.py
+    │   ├── __init__.py
+    │   └── testData
+    │       ├── battery_const.csv
+    │       ├── drag_const.csv
+    │       ├── parameter_list.csv
+    │       ├── raw_data.csv
+    │       ├── sliced_data.csv
+    │       └── speeds.csv
+    ├── main.py
+    ├── redisExtract
+    │   ├── config.py
+    │   ├── extractVars.py
+    │   ├── __init__.py
+    │   └── __pycache__
+    │       ├── config.cpython-312.pyc
+    │       ├── extractVars.cpython-312.pyc
+    │       └── __init__.cpython-312.pyc
+    ├── simulinkPlugin
+    │   ├── __init__.py
+    │   └── simulinkPlugin.py
+    └── toolTesting
+        ├── dataslicer.py
+        ├── redisTest.py
+        └── variable_gen.py
 ```
 
 ## Features
@@ -110,19 +105,6 @@ solar_car_telemetry/
 
 ## Things to Determine
 
-### Database Configuration
-1. **Server Details**
-   - [ ] Actual Redis server IP address
-   - [ ] Port number if different from default
-   - [ ] Authentication credentials if required
-   - [ ] Database number if multiple databases exist
-
-2. **Network Setup**
-   - [ ] Network architecture diagram
-   - [ ] Required firewall configurations
-   - [ ] VPN setup if needed
-   - [ ] Bandwidth requirements
-
 ### Data Requirements
 1. **Parameter Verification**
    - [ ] Complete list of available telemetry parameters
@@ -149,41 +131,6 @@ solar_car_telemetry/
    - [ ] Output format preferences
    - [ ] Visualization requirements
 
-## Usage
-
-1. Configure Redis connection in `src/config/settings.py`:
-```python
-# Update with actual server details
-REDIS_CONFIG = {
-    'host': 'actual.server.ip',
-    'port': 6379,
-    'db': 0,
-    'password': 'if_required'
-}
-```
-
-2. Run Python script to fetch and convert telemetry data:
-```python
-from src.telemetry.simulation_converter import SimulationConverter
-
-# Create converter
-converter = SimulationConverter()
-
-# Convert telemetry data
-converter.save_simulation_data(telemetry_data)
-```
-
-3. Use the data in MATLAB/Simulink:
-```matlab
-% Load telemetry data
-data = load('telemetry_sim_data.mat');
-
-% Create time series for Simulink
-speed_ts = timeseries(data.speed, data.sim_time);
-
-% Run simulation and compare results
-simulation_example
-```
 
 ## Parameter Mapping
 
@@ -249,15 +196,15 @@ Contact the simulation team for questions or issues.
 ## Next Steps
 
 1. **Immediate Actions**
-   - [ ] Determine actual Redis server details
-   - [ ] Verify parameter names and units
-   - [ ] Test network connectivity
+   - [x] Determine actual Redis server details
+   - [x] Verify parameter names and units
+   - [x] Test network connectivity
    - [ ] Validate data format
 
 2. **Short Term**
    - [ ] Complete configuration setup
    - [ ] Implement basic error handling
-   - [ ] Create test dataset
+   - [x] Create test dataset
    - [ ] Verify Simulink integration
 
 3. **Long Term**
