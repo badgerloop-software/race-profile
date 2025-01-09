@@ -36,6 +36,12 @@ def findAvgValue(dfp):
             r.ts().add('rolling_average', ts, val)
     return rolling_avg
 
+def findAverageValues(dfp):
+    """
+    Given a pandas dataframe, compute the average value of each column.
+    """
+    return dfp.mean()
+
 if __name__ == '__main__':
     batteryDF = loadIntoPandas(batteryFile)
     print(findAvgValue(batteryDF))

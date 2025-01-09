@@ -1,0 +1,11 @@
+Redis:
+(May be optional): sudo systemctl enable redis-stack-server
+sudo systemctl start redis-stack-server
+redis-commander
+
+Datagenerator: npm start
+
+Backend: poetry shell->
+python3 main.py
+
+Frontend: npm start
