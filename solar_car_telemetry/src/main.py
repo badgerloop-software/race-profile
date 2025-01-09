@@ -10,6 +10,7 @@ import pandas as pd
 
 from redisExtract import extractVars
 from dataProcess import dataProcess as dprocess
+from simulinkPlugin import simulinkPlugin as sp
 
 def main():
     """
@@ -23,11 +24,22 @@ def main():
     #extractVars.redis_get_variables()
 
     data = pd.DataFrame()
+
+    #Specify the range of time to extract data from here
     data = extractVars.request_data(desired_params, 0, '+')
 
+    # Find averages for each of the desired parameters
     averages = dprocess.findAverageValues(data)
 
-    print(averages)
+    # Initialize and run Simulink simulation
+    sp.__init__()
+    results = sp.send_to_simulation(averages)
+    
+    print("Simulation Results: ")
+    print(results)
+    
+    sp.close()
+
 
 
 

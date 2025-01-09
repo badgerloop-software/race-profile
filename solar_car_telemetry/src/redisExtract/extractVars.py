@@ -3,6 +3,7 @@ import pandas as pd
 import json
 redis_host = 'localhost'
 redis_port = 6379
+
 r = redis.StrictRedis(host = config.REDIS_URL, port = config.REDIS_PORT, db = config.REDIS_DB, decode_responses=True)
 
 
@@ -28,6 +29,9 @@ def print_variables():
 
     
 async def request_data(keys: list, starting_time, ending_time):
+    """
+    Adapted from chase-car-dahboard/Backend/core/db.py
+    """
     try:
         df = pd.DataFrame()
         min_length = float('inf')

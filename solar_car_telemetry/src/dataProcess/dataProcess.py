@@ -44,4 +44,7 @@ def findAverageValues(dfp):
 
 if __name__ == '__main__':
     batteryDF = loadIntoPandas(batteryFile)
-    print(findAvgValue(batteryDF))
+    print( "batteryDF: ")
+    print(batteryDF)
+    print("averageValues: ")
+    print(findAverageValues(batteryDF))
