@@ -17,7 +17,7 @@ LBF_TO_KG = 0.45359237;
 % Configurable Constants
 TIME_RES = 10; % Seconds
 START_TIME = 9*(SECONDS_PER_HOUR) + 0*(SECONDS_PER_MINUTE); % start time of day
-END_TIME = 20*(SECONDS_PER_HOUR) + 0*(SECONDS_PER_MINUTE); % end time of day
+END_TIME = 16*(SECONDS_PER_HOUR) + 0*(SECONDS_PER_MINUTE); % end time of day
 PROFILE_LENGTH = END_TIME - START_TIME; % Seconds
 HV_PACK_VOLTAGE = 96; % Volts; TEMPORARY until voltage curve is derived
 HV_PACK_CAPACITY = 80; % 57 % Amp-hours
@@ -42,10 +42,10 @@ P_SPEED = 25;    % Speed P
 I_SPEED = 3; % Speed I
 D_SPEED = 40; % Speed D
 
-TARGET_POWER = 100; %kW
-P_POWER = 1000;
-I_POWER = 20;
-D_POWER = 10;
+TARGET_POWER = 700; %kW
+P_POWER = 10;
+I_POWER = 1;
+D_POWER = 1;
 
 %Battery Management System
 MAX_SOC = 0.99;
@@ -132,7 +132,7 @@ PRESSURE = 500 / UNIT_TO_KILO; % Pa
 %% Solar Data
 % the data entered now is made up, to pull actual data from the internet
 SOLAR_TIME_BREAKPOINTS = START_TIME:900:END_TIME;
-FORECASTED_IRRADIANCE = -50*((SOLAR_TIME_BREAKPOINTS-START_TIME).*(SOLAR_TIME_BREAKPOINTS-END_TIME) / (PROFILE_LENGTH/2)^2);%500 * ones(size(SOLAR_TIME_BREAKPOINTS));
+FORECASTED_IRRADIANCE = -5*((SOLAR_TIME_BREAKPOINTS-START_TIME).*(SOLAR_TIME_BREAKPOINTS-END_TIME) / (PROFILE_LENGTH/2)^2);%500 * ones(size(SOLAR_TIME_BREAKPOINTS));
 
 % outputName = 'Outputs/results.csv';
 % simulation = sim("Car.slx");
