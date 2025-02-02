@@ -11,6 +11,7 @@ import pandas as pd
 from redisExtract import extractVars
 from dataProcess import dataProcess as dprocess
 from simulinkPlugin import simulinkPlugin as sp
+from dataProcess import constants as consts
 
 def main():
     """
@@ -18,7 +19,7 @@ def main():
     """
 
     #Initialize list of desired parameters to request
-    desired_params = ['speed', 'pack_voltage', 'headlights_led_en', 'motor_current', 'fan_speed', 'air_temp', 'pack_power', 'soc']
+    desired_params = ['speed', 'pack_voltage', 'headlights_led_en', 'motor_current', 'fan_speed', 'air_temp', 'pack_power', 'soc', consts.ACCEL_TOLERANCE, consts.D_SPEED]
     
     extractVars.print_variables()
     #extractVars.redis_get_variables()
@@ -39,8 +40,6 @@ def main():
     print(results)
     
     sp.close()
-
-
 
 
 if __name__ == "__main__":
