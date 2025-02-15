@@ -13,3 +13,5 @@ if __name__ == '__main__':
         r.mset(data_dict)
         print(f"Fed row {i}.")
         time.sleep(0.5)
+        
+    print("Feeding complete. Restart with \"python3 dataGen.py\"")
