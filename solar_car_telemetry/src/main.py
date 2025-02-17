@@ -16,6 +16,7 @@ from redisExtract import extractVars
 from dataProcess import dataProcess as dprocess
 from simulinkPlugin import simulinkPlugin as sp
 from dataProcess import constants as const
+from solcast import get_weather_data
     
 # Create figure for plotting
 fig, ax = plt.subplots()
@@ -51,6 +52,7 @@ def animate(i):
 
 
 if __name__ == "__main__":
+    weather_data = get_weather_data()
     # Set up plot to call animate() function periodically
     ani = animation.FuncAnimation(fig, animate, interval=1000)
     plt.show()
