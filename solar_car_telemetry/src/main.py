@@ -1,8 +1,3 @@
-"""
-Read telemetry data from Redis and 
-provide access to the data in a structured
-format for the simulation.
-"""
 import redis, config
 import numpy as np
 #import matlab
@@ -74,5 +69,8 @@ if __name__ == "__main__":
         # Set up plot to call animate() function periodically
         ani = animation.FuncAnimation(fig, animate, interval=1000)
         plt.show()
-    
+
+    #Obtaining weather data from the Grand Canyon
+    get_weather_data(36.099763, -112.112485)
+
     print("Finished.")
