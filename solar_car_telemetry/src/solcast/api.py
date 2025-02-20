@@ -65,10 +65,24 @@ def get_weather_data(latitude = -33.86882, longitude = 151.209295, hours=168):
       'Cookie': 'ss-id=8SElFVj7tRQB6MOFSib5; ss-opt=temp; ss-pid=GiNtGf5t9YWQ7wztBvMZ'
     }
 
+    error_codes = {
+        200: "OK: A successful response.",
+        202: "The request was accepted but does not include any data in the response. Refer to the message returned in the body of the response for more information.",
+        404: "Bad Request: The request may have included invalid parameters. For more information, refer to the message returned in the response's body.",
+        401: "Unauthorized: The request did not correctly include a valid API Key. Check the API Key used in the request is correct, active, and properly added to the request using one of the available authentication methods.",
+        402: "Payment Required: You may have exceeded the available transaction limit or the requested endpoint is not available on your current plan. Check the response body for the exact reason.",
+        403: "Forbidden: The request may include a parameter not available at your current subscription level.",
+        429: "Too Many Requests: The request exceeds the available rate limit at your current subscription level.",
+        500: "Internal Server Error: An internal error has prevented the request from processing."
+    }
+
     response = requests.request("GET", url, headers=headers, data=payload)
 
     # Check the status code of the response
     print(f"Status code: {response.status_code}")
+
+    # Print status message
+    print(f"Status message: {error_codes[response.status_code]}")
 
     # Check the response text
     print(f"Response text: {response.text}")
