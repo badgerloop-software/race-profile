@@ -2,9 +2,10 @@ import requests
 import csv
 from dotenv import load_dotenv
 import os
+import pandas as pd
 
 """
-    The CSV columns include (as observed in output1.csv):
+    The CSV columns should include (as observed in output.csv):
 
     - **ghi (W/m2)**  
       Global Horizontal Irradiance (GHI).  
@@ -91,13 +92,17 @@ def get_weather_data(latitude = -33.86882, longitude = 151.209295, hours=168):
     lines = response.text.strip().split('\n')
 
     # Write the lines to a CSV file
-    try:
-        with open(csv_path, 'w', newline='') as csvfile:
-            csvwriter = csv.writer(csvfile, quoting=csv.QUOTE_NONE, escapechar=' ')
-            for row in csv.reader(lines):
-                csvwriter.writerow(row)
-    except Exception as e:
-        print(f"Error writing to file: {e}")
+    if response.status_code == 200:
+      try:
+          with open(csv_path, 'w', newline='') as csvfile:
+              csvwriter = csv.writer(csvfile, quoting=csv.QUOTE_NONE, escapechar=' ')
+              for row in csv.reader(lines):
+                  csvwriter.writerow(row)
+          return pd.read_csv(csv_path)
+      except Exception as e:
+          print(f"Error writing to file: {e}")
+    else:
+        print(f"API output not saved, status code {response.status_code}.")
 
 if __name__ == '__main__':
     get_weather_data()
