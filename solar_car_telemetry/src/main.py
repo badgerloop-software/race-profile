@@ -1,4 +1,3 @@
-import redis, config
 import numpy as np
 #import matlab
 import pandas as pd
@@ -17,8 +16,8 @@ from solcast import get_weather_data
 
 if __name__ == "__main__":
     #Obtaining weather data from the Grand Canyon
-    get_weather_data(36.099763, -112.112485, 5)
-
+    #get_weather_data(36.099763, -112.112485, 5)
     #extractVars.launch_live_graph()
 
-    print("Finished.")
+    extractVars.record_data()
+    print("Finished")
