@@ -7,44 +7,69 @@ Spcifically, the system will take the following data measured in our solar car, 
 ## Project Structure
 
 ```
-├───Data
-├───data_generator
-├───elevation-data
-├───Outputs
-├───Python Code (OLD)
-├───resources
-│   └───project
-│       ├───EEtUlUb-dLAdf0KpMVivaUlztwA
-│       ├───EEUS99fOfNmnYjcnepENULz4jxk
-│       ├───fjRQtWiSIy7hIlj-Kmk87M7s21k
-│       ├───NjSPEMsIuLUyIpr2u1Js5bVPsOs
-│       ├───qaw0eS1zuuY1ar9TdPn1GMfrjbQ
-│       └───root
-├───slprj
-│   ├───accel
-│   │   └───Car
-│   │       └───tmwinternal
-│   ├───grt
-│   │   └───Car
-│   │       └───tmwinternal
-│   ├───modeladvisor
-│   │   ├───Car
-│   │   └───com_2emathworks_2ecgo_2egroup_
-│   │       └───Car
-│   └───sim
-│       └───varcache
-│           └───Car
-│               └───tmwinternal
-├───solar_car_telemetry
-│   └───src
-│       ├───dataProcess
-│       │   ├───testData
-│       │   └───__pycache__
-│       ├───redisExtract
-│       │   └───__pycache__
-│       ├───simulinkPlugin
-│       │   └───__pycache__
-│       ├───toolTesting
-│       └───__pycache__
-└───TestDataAnalysis
+|   EDashboard Start Instructions.txt
+|   README.md
+|
+\---src
+    |   config.py
+    |   main.py
+    |   sim_the_new_model.m
+    |
+    +---dataProcess
+    |   |   constants.py
+    |   |   dataProcess.py
+    |   |   data_loader.py
+    |   |   __init__.py
+    |   |
+    |   +---testData
+    |   |       battery_const.csv
+    |   |       drag_const.csv
+    |   |       parameter_list.csv
+    |   |       raw_data.csv
+    |   |       sliced_data.csv
+    |   |       speeds.csv
+    |   |
+    |   \---__pycache__
+    |           constants.cpython-312.pyc
+    |           dataProcess.cpython-312.pyc
+    |           __init__.cpython-312.pyc
+    |
+    +---redisExtract
+    |   |   extractVars.py
+    |   |   __init__.py
+    |   |
+    |   \---__pycache__
+    |           extractVars.cpython-312.pyc
+    |           __init__.cpython-312.pyc
+    |
+    +---simulinkPlugin
+    |   |   simulinkPlugin.py
+    |   |   __init__.py
+    |   |
+    |   \---__pycache__
+    |           simulinkPlugin.cpython-312.pyc
+    |           __init__.cpython-312.pyc
+    |
+    +---solcast
+    |   |   .env
+    |   |   .gitignore
+    |   |   api.py
+    |   |   ASC2022_A.csv
+    |   |   ASC2022_FullRoute.txt
+    |   |   Makefile
+    |   |   output.csv
+    |   |   output_old.csv
+    |   |   __init__.py
+    |   |
+    |   \---__pycache__
+    |           api.cpython-312.pyc
+    |           __init__.cpython-312.pyc
+    |
+    +---toolTesting
+    |       dataslicer.py
+    |       redisTest.py
+    |       variable_gen.py
+    |
+    \---__pycache__
+            config.cpython-312.pyc
 ```
