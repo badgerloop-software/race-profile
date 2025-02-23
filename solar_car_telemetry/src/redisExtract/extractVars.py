@@ -6,6 +6,7 @@ import matplotlib.animation as animation
 from datetime import datetime
 import ctypes
 import time
+import numpy as np
 
 redis_host = 'localhost'
 redis_port = 6379
@@ -68,12 +69,16 @@ def get_variable_value(variable_name='Var1'):
         return None
 
 def record_data(time_seconds = 2, requested = 'Var1'):
-    data = []
+    global features 
+    features = np.array([])
+
     start_time = time.perf_counter()
+    print(f"Recording for {time_seconds} seconds...")
     while time.perf_counter() - start_time < time_seconds:
-        data.append(get_variable_value())
+        features = np.append(features, float(get_variable_value()))
         time.sleep(0.5)
-    print(data)
+    print(features)
+    return features
 
 def animate(i, telem_var = 'Var1'):
     try:
