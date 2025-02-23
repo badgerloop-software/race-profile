@@ -1,5 +1,6 @@
 import pandas as pd
 import redis
+import numpy as np
 
 """
 Extract data from the various dataframes for each relevant variable and prepare it to send to Simulink.
@@ -22,29 +23,48 @@ def extractTimeSeries(startTime: int, endTime: int):
     df = pd.DataFrame(data, columns=['timestamp', 'value'])
     return df
 
-def findAvgValue(dfp):
+def remove_outliers(numpy_array: np.array):
     """
-    Compute the rolling average of the time series data and store it in Redis.
+    Given a numpy array, remove any outliers.
     """
-    r = redis.Redis()
-    rolling_avg = dfp['value'].rolling(window=5).mean()
-    # Create a new time series in Redis for the rolling average
-    r.ts().create('rolling_average')
-    # Add the rolling average data points to Redis
-    for ts, val in zip(dfp['timestamp'], rolling_avg):
-        if not pd.isna(val):
-            r.ts().add('rolling_average', ts, val)
-    return rolling_avg
+    q1 = np.percentile(numpy_array, 25) 
+    q2 = np.percentile(numpy_array, 50) 
+    q3 = np.percentile(numpy_array, 75) 
+    iqr = q3 - q1
+    
+    # print(f"25th percentile(Q1): {q1}")
+    # print(f"50th percentile((Median): {q2}")
+    # print(f"75th percentile(Q3): {q3}")
 
-def findAverageValues(dfp):
+    high = q3 + (1.5 * iqr)
+    low = q1 - (1.5 * iqr)
+
+    removed_outliers = np.array([])
+
+    for i in range(len(numpy_array)):
+        if(numpy_array[i] <= high and numpy_array[i] >= low):
+            removed_outliers = np.append(removed_outliers, numpy_array[i])
+    
+    #print(removed_outliers)
+    return removed_outliers
+
+
+
+def process_recorded_values(numpy_dict, input_variables):
     """
-    Given a pandas dataframe, compute the average value of each column.
+    Given a dictionary which includes input variables as a key 
+    and the numpy array of the corresponding variables recorded, remove outliers from the numpy
+    array and find the mean.
     """
-    return dfp.mean()
+    averaged_values = np.array([])
+    for variable in input_variables:
+        #Remove outliers from this numpy array and calculate the average.
+        averaged_values = np.append(averaged_values, np.mean(remove_outliers(numpy_dict[variable])))
+    #print(averaged_values)
+    return(averaged_values)
+    
 
 if __name__ == '__main__':
     batteryDF = loadIntoPandas(batteryFile)
     print( "batteryDF: ")
     print(batteryDF)
-    print("averageValues: ")
-    print(findAverageValues(batteryDF))

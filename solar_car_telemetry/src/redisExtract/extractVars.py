@@ -80,6 +80,27 @@ def record_data(time_seconds = 2, requested = 'Var1'):
     print(features)
     return features
 
+def record_multiple_data(time_seconds=2, variables=['Var1', 'dcdc_current', 'regen_brake']):
+    """
+    Records multiple variables from Redis over a specified time period using numpy arrays
+    Args:
+        time_seconds (int): Duration to record data
+        variables (list): List of variable names to record
+    Returns:
+        dict: Dictionary with variable names as keys and numpy arrays of values as values
+    """
+    data = {var: np.array([]) for var in variables}
+    
+    start_time = time.perf_counter()
+    print(f"Recording {len(variables)} variables for {time_seconds} seconds...")
+    while time.perf_counter() - start_time < time_seconds:
+        for var in variables:
+            value = get_variable_value(var)
+            if value is not None:
+                data[var] = np.append(data[var], float(value))
+        time.sleep(0.5)
+    return data
+
 def animate(i, telem_var = 'Var1'):
     try:
         global xs, ys
