@@ -92,7 +92,4 @@ if __name__ == '__main__':
     # print( "batteryDF: ")
     # print(batteryDF)
     
-    # start_time = time.perf_counter()
     test_process_recorded_values()
-    # elapsed_time = time.perf_counter() - start_time
-    # print(f"Function execution time: {elapsed_time:.6f} seconds")
