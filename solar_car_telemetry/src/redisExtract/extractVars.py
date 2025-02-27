@@ -1,6 +1,6 @@
 import redis
 import pandas as pd
-import config
+import json
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from datetime import datetime
@@ -8,7 +8,10 @@ import ctypes
 import time
 import numpy as np
 
-r = redis.StrictRedis(host = config.REDIS_HOST, port = config.REDIS_PORT, db = config.REDIS_DB, decode_responses=True)
+redis_host = 'localhost'
+redis_port = 6379
+
+r = redis.StrictRedis(host = redis_host, port = redis_port, db = 0, decode_responses=True)
 
 # Create figure for plotting
 fig, ax = plt.subplots()

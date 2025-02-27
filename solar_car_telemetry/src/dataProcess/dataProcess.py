@@ -1,13 +1,13 @@
 import pandas as pd
 import redis
 import numpy as np
+import time
 
 """
-Extract data from the various dataframes for each relevant variable and prepare it to send to Simulink.
+Extract data for each relevant variable in the list and prepare it to send to Simulink.
 """
-batteryFile = 'solar_car_telemetry/src/dataProcess/testData/battery_const.csv'
 
-def loadIntoPandas(csv_filename):
+def loadIntoPandas(csv_filename = 'solar_car_telemetry/src/dataProcess/testData/battery_const.csv'):
     """
     Given a csv file, load data into a Pandas dataframe.
     """
@@ -48,8 +48,6 @@ def remove_outliers(numpy_array: np.array):
     #print(removed_outliers)
     return removed_outliers
 
-
-
 def process_recorded_values(numpy_dict, input_variables):
     """
     Given a dictionary which includes input variables as a key 
@@ -63,8 +61,38 @@ def process_recorded_values(numpy_dict, input_variables):
     #print(averaged_values)
     return(averaged_values)
     
+def test_process_recorded_values(var_list_length = 20, npy_arr_length = 300):
+    """
+    Creates test data for multiple variables (20 total by default), each with about
+    300 random values by default, then invokes process_recorded_values.
+    """
+    start_time = time.perf_counter()
+    import numpy as np
+
+    # Generate sample dictionary with 20 variables
+    variable_names = [f"Var{i}" for i in range(1, var_list_length + 1)]
+    sample_data = {}
+    for var in variable_names:
+        sample_data[var] = np.random.randn(npy_arr_length)  # 300 random values
+
+    # print(f"Variable names: {variable_names}")
+    # print("Sample data")
+    # print(sample_data)
+
+    # Process recorded values
+    means = process_recorded_values(sample_data, variable_names)
+    print("Processed means:")
+    print(means)
+    # print(len(means))
+    elapsed_time = time.perf_counter() - start_time
+    print(f"Function execution time: {elapsed_time:.6f} seconds")
 
 if __name__ == '__main__':
-    batteryDF = loadIntoPandas(batteryFile)
-    print( "batteryDF: ")
-    print(batteryDF)
+    # batteryDF = loadIntoPandas()
+    # print( "batteryDF: ")
+    # print(batteryDF)
+    
+    # start_time = time.perf_counter()
+    test_process_recorded_values()
+    # elapsed_time = time.perf_counter() - start_time
+    # print(f"Function execution time: {elapsed_time:.6f} seconds")
