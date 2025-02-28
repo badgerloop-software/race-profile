@@ -3,9 +3,10 @@ import csv
 from dotenv import load_dotenv
 import os
 import pandas as pd
+from datetime import datetime, timedelta
 
 """
-    The CSV columns should include (as observed in output.csv):
+    The CSV columns in the response to the API request should include (as observed in output.csv):
 
     - **ghi (W/m2)**  
       Global Horizontal Irradiance (GHI).  
@@ -36,6 +37,81 @@ import pandas as pd
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 csv_path = os.path.join(current_dir, "output.csv")
+api_calls_path = os.path.join(current_dir, "api_request_log.csv")
+
+def track_api_calls(status_code: int):
+    """
+    Helper method for get_weather_data() to keep track of sucessfull API calls within a 24 hour period. 
+    Helps us understand how many requests we can send in a 24-hour time period. All values except the last
+    attempted request timestamp reset after 24 hours.
+
+    Parameters:
+      status_code (int): The status code that Solcast API returns
+
+    Returns:
+      None. Writes request data to api_request_log.csv.
+    """
+    now = datetime.now()
+    one_day_ago = now - timedelta(hours=24)
+
+    try:
+        with open(api_calls_path, 'r') as file:
+            csv_reader = csv.reader(file)
+            existing_data = list(csv_reader)
+    except FileNotFoundError:
+        print(f"Error: The file '{api_calls_path}' was not found.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+    initial_sucessfull_call = datetime.strptime(existing_data[1][0], '%Y-%m-%d %H:%M:%S.%f')
+    last_attempted_request = datetime.strptime(existing_data[1][1], '%Y-%m-%d %H:%M:%S.%f')
+    time_last_requested_sucessfully = datetime.strptime(existing_data[1][2], '%Y-%m-%d %H:%M:%S.%f')
+    successful_calls = int(existing_data[1][3])
+    calls_429 = int(existing_data[1][4])
+    other_failed_calls = int(existing_data[1][5])
+
+    # print("Before...")
+    # print(f"Initial Sucessfull Call: {initial_sucessfull_call}")
+    # print(f"Last Attempted Request: {last_attempted_request}")
+    # print(f"Time Last Requested Sucessfully: {time_last_requested_sucessfully}")
+    # print(f"Successful Calls: {successful_calls}")
+    # print(f"429 Calls: {calls_429}")
+    # print(f"Other failed calls: {other_failed_calls}")
+
+    last_attempted_request = now
+
+    if status_code == 200:
+      if time_last_requested_sucessfully < one_day_ago:
+        print("Resetting Initial request timestamp...")
+        successful_calls = 0
+        calls_429 = 0
+        other_failed_calls = 0
+        initial_sucessfull_call = now
+        print("Reset")
+
+      successful_calls += 1
+      time_last_requested_sucessfully = now
+    elif status_code == 429:
+        calls_429 += 1
+    else:
+        other_failed_calls += 1
+
+    # print("After...")
+    # print(f"Initial Sucessfull Call: {initial_sucessfull_call}")
+    # print(f"Last Attempted Request: {last_attempted_request}")
+    # print(f"Time Last Requested Sucessfully: {time_last_requested_sucessfully}")
+    # print(f"Successful Calls: {successful_calls}")
+    # print(f"429 Calls: {calls_429}")
+    # print(f"Other failed calls: {other_failed_calls}")
+
+    data = [
+    ['Initial Sucessful Call', 'Last Attempted Request', 'Time Last Requested Sucessfully' ,'Sucessful API Calls', '429 Calls', 'Other Failed Calls'],
+    [initial_sucessfull_call, last_attempted_request, time_last_requested_sucessfully, successful_calls, calls_429, other_failed_calls]
+    ]
+
+    with open(api_calls_path, 'w', newline='') as file:
+      writer = csv.writer(file)
+      writer.writerows(data)
 
 def get_weather_data(latitude = -33.86882, longitude = 151.209295, hours=168):
     """
@@ -78,6 +154,7 @@ def get_weather_data(latitude = -33.86882, longitude = 151.209295, hours=168):
     }
 
     response = requests.request("GET", url, headers=headers, data=payload)
+    track_api_calls(response.status_code)
 
     # Check the status code of the response
     print(f"Status code: {response.status_code}")

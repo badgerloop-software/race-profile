@@ -1,5 +1,4 @@
 import numpy as np
-import datetime
 # import matlab
 # import pandas as pd
 # import time
@@ -22,8 +21,5 @@ if __name__ == "__main__":
 
     # print(type(means))
     # print(means)
-
-    today = datetime.date.today().isoformat()
-    print(today)
 
     print("Finished.")
