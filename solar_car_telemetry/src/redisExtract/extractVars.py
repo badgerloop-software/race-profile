@@ -1,6 +1,6 @@
 import redis
 import pandas as pd
-import config
+import solar_car_telemetry.src.redisExtract.cons as cons
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from datetime import datetime
@@ -8,7 +8,7 @@ import ctypes
 import time
 import numpy as np
 
-r = redis.StrictRedis(host = config.REDIS_HOST, port = config.REDIS_PORT, db = config.REDIS_DB, decode_responses=True)
+r = redis.StrictRedis(host = cons.REDIS_HOST, port = cons.REDIS_PORT, db = cons.REDIS_DB, decode_responses=True)
 
 # Create figure for plotting
 fig, ax = plt.subplots()

@@ -91,5 +91,5 @@ if __name__ == '__main__':
     # batteryDF = loadIntoPandas()
     # print( "batteryDF: ")
     # print(batteryDF)
-    
-    test_process_recorded_values()
+
+    test_process_recorded_values(50, 600)
