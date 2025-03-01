@@ -123,7 +123,7 @@ def get_weather_data(latitude = -33.86882, longitude = 151.209295, hours=168):
         hours (int): Number of hours to retrieve, default 168 (7 days).
 
     Returns:
-        None. Writes data to output1.csv in the same directory as api.py.
+        Response data in Pandas Dataframe and writes same data to output.csv in the same directory as api.py.
     """
     
     load_dotenv()
