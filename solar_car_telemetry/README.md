@@ -2,7 +2,7 @@
 
 We need to find the optimal racing profile given the real-time performance of the car. A vital part to our system, then, is to build a data pipeline from Engineering Dashboard, where all real-time car data are stored, to Simulink Model. 
 
-Spcifically, the system will take the following data measured in our solar car, from our weather API, and initial constants, process it, prepare it, and send it to the Simulunk model.
+Specifically, the system will take the following data measured in our solar car, from our weather API, and initial constants, process it, prepare it, and send it to the Simulink model.
 
 ## Project Structure
 
@@ -93,4 +93,4 @@ This package interfaces with solar forecast APIs to obtain weather and solar irr
 - **output.csv**: Processed solar forecast data ready for the simulation
 
 ### toolTesting
-This folder contains miscellanous functions that were written before and not being activeley used.
+This folder contains miscellaneous functions that were written before and not being actively used.
