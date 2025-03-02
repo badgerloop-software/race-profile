@@ -70,7 +70,7 @@ This package handles the processing and transformation of raw data:
 - **testData/**: Directory containing CSV files with test data and constants for development and testing:
   - Battery constants, drag coefficients, parameter lists, and sample speed profiles
 
-### redisExtract
+### dataExtract
 This package interfaces with the Engineering Dashboard's Redis database:
 - **extractVars.py**: Functions to extract real-time telemetry data from Redis and convert it to formats usable by the data processing pipeline
 

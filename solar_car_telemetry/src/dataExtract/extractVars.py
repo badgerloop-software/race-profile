@@ -76,7 +76,7 @@ def record_data(time_seconds = 2, requested = 'Var1'):
     print(features)
     return features
 
-def record_multiple_data(time_seconds=2, sampling_frequency = 0.5, variables=['Var1', 'dcdc_current', 'regen_brake']):
+def record_multiple_data(time_seconds=2, sampling_frequency = 0.5, variables=['soc', 'pack_power', 'air_temp']):
     """
     Records multiple variables from Redis over a specified time period using numpy arrays
     Args:
@@ -97,6 +97,31 @@ def record_multiple_data(time_seconds=2, sampling_frequency = 0.5, variables=['V
                 data[var] = np.append(data[var], float(value))
         time.sleep(sampling_frequency)
     return data
+
+def open_route(route_file="solar_car_telemetry/src/solcast/ASC2022_FullRoute.txt"):
+    """
+    Opens route data from text file to produce dictionary.
+
+    Args:
+        route_file (string): path of the route file.
+
+    Returns:
+        dict: Dictionary with distance travelled as the key, and a tuple of (latitude, longitude) as the value.
+    """
+    route_dict = {}
+    with open(route_file, "r", newline="") as file:
+        for row in file:
+            if not row.strip():
+                continue
+            spliced = row.split()
+            try:
+                lat, lon = float(spliced[1]), float(spliced[2])
+                distance_travelled = float(spliced[7])
+            except ValueError:
+                continue
+            route_dict[distance_travelled] = (lat, lon)
+    #print(route_dict)
+    return route_dict
 
 def animate(i, telem_var = 'Var1'):
     try:
