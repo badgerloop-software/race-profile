@@ -76,11 +76,12 @@ def record_data(time_seconds = 2, requested = 'Var1'):
     print(features)
     return features
 
-def record_multiple_data(time_seconds=2, variables=['Var1', 'dcdc_current', 'regen_brake']):
+def record_multiple_data(time_seconds=2, sampling_frequency = 0.5, variables=['Var1', 'dcdc_current', 'regen_brake']):
     """
     Records multiple variables from Redis over a specified time period using numpy arrays
     Args:
         time_seconds (int): Duration to record data
+        sampling_frequency (int): save the value of each variable every ___ seconds
         variables (list): List of variable names to record
     Returns:
         dict: Dictionary with variable names as keys and numpy arrays of values as values
@@ -94,7 +95,7 @@ def record_multiple_data(time_seconds=2, variables=['Var1', 'dcdc_current', 'reg
             value = get_variable_value(var)
             if value is not None:
                 data[var] = np.append(data[var], float(value))
-        time.sleep(0.5)
+        time.sleep(sampling_frequency)
     return data
 
 def animate(i, telem_var = 'Var1'):
