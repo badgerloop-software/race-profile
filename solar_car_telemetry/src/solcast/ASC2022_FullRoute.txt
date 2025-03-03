@@ -1,4 +1,4 @@
-type	latitude	longitude	altitude (ft)	vmg (mph)	course	slope (%)	distance (mi)	distance_interval (ft)	color	opacity	width	scale	sym	name	desc	kml_folder
+type	latitude	longitude	altitude_(ft)	vmg_(mph)	course_slope_(%)	distance_(mi)	distance_interval_(ft)	color	opacity_width	scale	sym	name	desc	kml_folder
 T	39.092185000	-94.417077000	1059.9				0.000		#0288d1	1.00	1.2			A. Independence to Topeka		Main Route
 T	39.092184000	-94.417187000	1060.1		269.3	0.6	0.006	31.22
 T	39.092197000	-94.417811000	1052.4		271.5	-4.4	0.039	177.18								
