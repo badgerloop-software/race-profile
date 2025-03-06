@@ -98,9 +98,9 @@ def record_multiple_data(time_seconds=2, sampling_frequency = 0.5, variables=['s
         time.sleep(sampling_frequency)
     return data
 
-def open_route(route_file="solar_car_telemetry/src/solcast/ASC2022_FullRoute.txt"):
+def open_route(route_file="solar_car_telemetry/src/solcast/ASC2022_A.csv"):
     """
-    Opens route data from text file to produce dictionary.
+    Opens route data from file to produce dictionary.
 
     Args:
         route_file (string): path of the route file.
@@ -113,10 +113,10 @@ def open_route(route_file="solar_car_telemetry/src/solcast/ASC2022_FullRoute.txt
         for row in file:
             if not row.strip():
                 continue
-            spliced = row.split()
+            spliced = row.split(",")
             try:
-                lat, lon = float(spliced[1]), float(spliced[2])
-                distance_travelled = float(spliced[7])
+                lat, lon = float(spliced[4]), float(spliced[5])
+                distance_travelled = float(spliced[0])
             except ValueError:
                 continue
             route_dict[distance_travelled] = (lat, lon)
