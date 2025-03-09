@@ -163,7 +163,7 @@ def get_weather_data(latitude = -33.86882, longitude = 151.209295, hours=168):
 
     print(f"Status code: {response.status_code}")
     print(f"Status message: {error_codes[response.status_code]}")
-    print(f"Location requested: ({longitude}, {latitude}).")
+    print(f"Location requested: ({latitude}, {longitude}).")
     print(f"Response text:\n{response.text}")
 
     # Split the text into lines and write them to CSV file
