@@ -1,4 +1,4 @@
-import requests
+import requests, requests.exceptions
 import csv
 from dotenv import load_dotenv
 import os
@@ -153,22 +153,20 @@ def get_weather_data(latitude = -33.86882, longitude = 151.209295, hours=168):
         500: "Internal Server Error: An internal error has prevented the request from processing."
     }
 
-    response = requests.request("GET", url, headers=headers, data=payload)
-    track_api_calls(response.status_code)
+    try:
+      response = requests.request("GET", url, headers=headers, data=payload)
+      track_api_calls(response.status_code)
+    except requests.exceptions.ConnectionError:
+       print("\n Error: No internet connection or unable. Please check connection and try again.\n")
+    except Exception as e:
+       print(f"An error occured: {e}")
 
-    # Check the status code of the response
     print(f"Status code: {response.status_code}")
-
-    # Print status message
     print(f"Status message: {error_codes[response.status_code]}")
-
-    # Check the response text
     print(f"Response text: {response.text}")
 
-    # Split the text into lines
+    # Split the text into lines and write them to CSV file
     lines = response.text.strip().split('\n')
-
-    # Write the lines to a CSV file
     if response.status_code == 200:
       try:
           with open(csv_path, 'w', newline='') as csvfile:

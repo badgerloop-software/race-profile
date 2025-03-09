@@ -40,21 +40,21 @@ def save_variables_pandas(debug = False):
     except Exception as e:
         print(e)
 
-def save_variables_dict(debug=False):
-    """
-    Reads Variables from Redis and returns them as a dictionary
-    """
-    try:
-        keys = r.keys()
-        values = r.mget(keys)
-        result_dict = {}
-        for key in keys:
-            result_dict[key] = values[keys.index(key)]
-        if debug:
-            print(result_dict)
-        return result_dict
-    except Exception as e:
-        print(e)
+# def save_variables_dict(debug=False):
+#     """
+#     Reads Variables from Redis and returns them as a dictionary
+#     """
+#     try:
+#         keys = r.keys()
+#         values = r.mget(keys)
+#         result_dict = {}
+#         for key in keys:
+#             result_dict[key] = values[keys.index(key)]
+#         if debug:
+#             print(result_dict)
+#         return result_dict
+#     except Exception as e:
+#         print(e)
 
 def get_variable_value(variable_name='Var1'):
     try:
@@ -170,4 +170,4 @@ def launch_live_graph():
     plt.show()
 
 if __name__ == '__main__':
-    save_variables_dict(True)
+    print('Hi.')
