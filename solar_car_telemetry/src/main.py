@@ -12,7 +12,26 @@ from solcast import get_weather_data
 
 
 if __name__ == "__main__":
+    #Take note of Input variables
     input_variables=['soc', 'pack_power', 'air_temp']
+    #Open Route data into lookup table
+    route = extractVars.open_route()
+
+    #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    #Run the sumulation and time how long it takes.
+
+    #With the total time the first simuation took, query the corresponsing data from redis and do data process to remove outliers and copmute means.
+
+    #Feed new values into simulation and run again.
+
+    #Repeat.
+
+    #Every 30 minutes, when the car it leaves certain radius distance, all of the weather data queryed from the API is irrelavant. 
+    #So we pull the predicted distance travelled, and look up the approximate position in the lookup table, and feed that position into the API function and feed the resulting irridance data into the simulation.
+    #SOC, Pack_power, ghi, cloud_opacity.
+    #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    
     #Obtaining weather data from the Grand Canyon
     #get_weather_data(36.099763, -112.112485, 5)
     #extractVars.launch_live_graph()
@@ -23,12 +42,7 @@ if __name__ == "__main__":
     # print(type(means))
     # print(means)
 
-    print(extractVars.open_route())
-
     # df = pd.read_csv("solar_car_telemetry/src/solcast/output.csv")
     # print(df)
-
-    #Every 30 minutes, when the car it leaves certain radius distance, all of the weather data queryed from the API is irrelavant. So we pull the predicted distance travelled, and look up the approximate position in the lookup table, and feed that position into the API function and feed the resulting irridance data into the simulation.
-    #SOC, Pack_power, ghi, cloud_opacity
 
     print("Finished.")
