@@ -1,14 +1,15 @@
-import numpy as np
+# import numpy as np
 # import matlab
-import pandas as pd
+# import pandas as pd
 # import time
 # import ctypes
 
 from dataExtract import extractVars
-from dataProcess import dataProcess as dprocess
+from dataExtract.NearestKeyDict import NearestKeyDict
+# from dataProcess import dataProcess as dprocess
 # from simulinkPlugin import simulinkPlugin as sp
 # from dataProcess import constants as const
-from solcast import get_weather_data
+# from solcast import get_weather_data
 
 
 if __name__ == "__main__":
@@ -16,6 +17,10 @@ if __name__ == "__main__":
     input_variables=['soc', 'pack_power', 'air_temp']
     #Open Route data into lookup table
     route = extractVars.open_route()
+    # print(route)
+
+    enhanced_route = NearestKeyDict(route)
+    print(enhanced_route[200000])
 
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     #Run the sumulation and time how long it takes.
