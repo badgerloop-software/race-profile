@@ -13,12 +13,19 @@ INCH_TO_METER = 0.0254;
 UNIT_TO_KILO = 1 / 1000;
 LBF_TO_KG = 0.45359237;
 
+%Simulation time-window: 30min
+PROFILE_LENGTH = 1800;
 
 % Configurable Constants
 TIME_RES = 10; % Seconds
-START_TIME = 9*(SECONDS_PER_HOUR) + 0*(SECONDS_PER_MINUTE); % start time of day
-END_TIME = 16*(SECONDS_PER_HOUR) + 0*(SECONDS_PER_MINUTE); % end time of day
-PROFILE_LENGTH = END_TIME - START_TIME; % Seconds
+%START_TIME = 9*(SECONDS_PER_HOUR) + 0*(SECONDS_PER_MINUTE); % start time of day
+%END_TIME = 9.5*(SECONDS_PER_HOUR) + 0*(SECONDS_PER_MINUTE); % end time of day
+%PROFILE_LENGTH = END_TIME - START_TIME; % Seconds
+
+CURRENT_TIME = second(datetime('now')); % Placeholder function for current race time
+START_TIME = CURRENT_TIME;
+END_TIME = CURRENT_TIME + PROFILE_LENGTH;
+
 HV_PACK_VOLTAGE = 96; % Volts; TEMPORARY until voltage curve is derived
 HV_PACK_CAPACITY = 80; % 57 % Amp-hours
 WHEEL_DIAMETER_METERS = 22 * INCH_TO_METER; % Meters
@@ -134,8 +141,7 @@ PRESSURE = 500 / UNIT_TO_KILO; % Pa
 SOLAR_TIME_BREAKPOINTS = START_TIME:900:END_TIME;
 FORECASTED_IRRADIANCE = -5*((SOLAR_TIME_BREAKPOINTS-START_TIME).*(SOLAR_TIME_BREAKPOINTS-END_TIME) / (PROFILE_LENGTH/2)^2);%500 * ones(size(SOLAR_TIME_BREAKPOINTS));
 
-% outputName = 'Outputs/results.csv';
-% simulation = sim("Car.slx");
-% out = simulation.logsout;
-% resultsTable = out.extractTimetable;
-% writetimetable(resultsTable, outputName)
+outputName = 'Outputs/results.csv';
+simulation = sim("Car.slx");
+out = simulation.logsout;
+
