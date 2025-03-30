@@ -7,7 +7,7 @@
 from dataExtract import extractVars
 from dataExtract.NearestKeyDict import NearestKeyDict
 # from dataProcess import dataProcess as dprocess
-# from simulinkPlugin import simulinkPlugin as sp
+from simulinkPlugin.plugin import CarSimulator
 # from dataProcess import constants as const
 # from solcast import get_weather_data
 
@@ -20,10 +20,15 @@ if __name__ == "__main__":
     # print(route)
 
     enhanced_route = NearestKeyDict(route)
-    print(enhanced_route[200000])
-
+    print(enhanced_route[200000][0]) 
+    print(enhanced_route[200000][1])
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     #Run the sumulation and time how long it takes.
+    # Create simulator instance
+    simulator = CarSimulator()
+
+    # Then use it where needed
+    results = simulator.run_simulation(target_speed=20, target_power=500)
 
     #With the total time the first simuation took, query the corresponsing data from redis and do data process to remove outliers and copmute means.
 

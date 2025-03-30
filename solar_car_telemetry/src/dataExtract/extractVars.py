@@ -170,4 +170,5 @@ def launch_live_graph():
     plt.show()
 
 if __name__ == '__main__':
-    print('Hi.')
+    currentvars = save_variables_pandas()
+    print(currentvars.loc['data', 'data'])
