@@ -5,7 +5,7 @@ We are building a race car, and we want to drive wisely. Thus came the ultimate 
 ## Tools for Race Strategy
 
 ### Matlab, Simulink, and Physical Intuitions 
-In the quest to study the dynamics and behavior of the car, we are building a simulated model of our solar car using Simulink on Matlab. A good introduction to these tools can be found here: [Race Strategy New Member Guide].
+In the quest to study the dynamics and behavior of the car, we are building a simulated model of our solar car using Simulink on Matlab.
 
 Personally, Simulink is fairly easy to get started (it's kinda like Scratch). Matlab on the other hand is both interesting and frustrating, so one would need a fair fluency in the language, as well as a good temper.
 
@@ -29,8 +29,8 @@ The simulation can be found on our github repo.
 
 - ✅ **Model Validation:** We need to show our model to each subteam and discuss if we are doing a faithful simulation of their part of the system.
 
-- 🔄 **Data Pipeline:** We need to be able to give valid predictions based on how our car is doing in realtime. We need to hook our simulation up with real-time data on the physical car so that it can be upgraded into a closed-loop feedback system.
+- 🔄 **Data Pipeline:** We need to be able to give valid predictions based on how our car is doing in realtime. We need to hook our simulation up with real-time data on the physical car so that it can be upgraded into a closed-loop feedback system. [Dedicated page: Data Pipeline and Model Integration]
 
-- 🎯 **The Optimizer:** Now that we have an idea on how the car runs given different conditions, how do we find the optimal race strategy? Our ultimate goal is to have the confidence to tell the driver to drive at a certain speed at a certain location, so that we keep a good balance between battery consumption and distance coverage, while considering physical constraints and weather prediction for the next several hours.
+- 🎯 **The Optimizer:** Now that we have an idea on how the car runs given different conditions, how do we find the optimal race strategy? Our ultimate goal is to have the confidence to tell the driver to drive at a certain speed at a certain location, so that we keep a good balance between battery consumption and distance coverage, while considering physical constraints and weather prediction for the next several hours. [Dedicated page: The Optimizer]
 
 - ⏳ **Fine-tuning:** (non-priority) We still need to match the simulated car to the actual car. This means that we need to analyze data from future test drives and retrieve parameters for our model. Since we are building a new car simultaneously, this would not be our main focus this semester. However, it would still be helpful to work with Mechanical to come up with a better methodology for test-drive data analysis.
