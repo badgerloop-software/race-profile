@@ -1,56 +1,59 @@
-"""
-Read telemetry data from Redis and 
-provide access to the data in a structured
-format for the simulation.
-"""
-import redis, config
-import numpy as np
-#import matlab
-import pandas as pd
+# import numpy as np
+# import matlab
+# import pandas as pd
+# import time
+# import ctypes
 
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-from datetime import datetime
-
-from redisExtract import extractVars
-from dataProcess import dataProcess as dprocess
-from simulinkPlugin import simulinkPlugin as sp
-from dataProcess import constants as const
-    
-# Create figure for plotting
-fig, ax = plt.subplots()
-xs = []  # Store timestamps
-ys = []  # Store Var1 values
-
-def animate(i):
-    global xs, ys
-
-    # Get Var1 value
-    df = extractVars.save_variables()
-    Var1 = df.loc[df['telem_variables'] == 'Var1'].values[0][1]
-    
-    # Add x and y to lists
-    xs.append(datetime.now())
-    ys.append(Var1)
-    
-    # Limit lists to 50 items
-    xs = xs[-50:]
-    ys = ys[-50:]
-    
-    # Clear axis
-    ax.clear()
-    
-    # Plot data
-    ax.plot(xs, ys)
-    
-    # Format plot
-    plt.xticks(rotation=45, ha='right')
-    plt.subplots_adjust(bottom=0.30)
-    plt.title('Var1 Over Time')
-    plt.ylabel('Var1 Value')
+from dataExtract import extractVars
+from dataExtract.NearestKeyDict import NearestKeyDict
+# from dataProcess import dataProcess as dprocess
+from simulinkPlugin.plugin import CarSimulator
+# from dataProcess import constants as const
+# from solcast import get_weather_data
 
 
 if __name__ == "__main__":
-    # Set up plot to call animate() function periodically
-    ani = animation.FuncAnimation(fig, animate, interval=1000)
-    plt.show()
+    #Take note of Input variables
+    input_variables=['soc', 'pack_power', 'air_temp']
+    #Open Route data into lookup table
+    route = extractVars.open_route()
+    # print(route)
+
+    enhanced_route = NearestKeyDict(route)
+    print(enhanced_route[200000][0]) 
+    print(enhanced_route[200000][1])
+    #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    #Run the sumulation and time how long it takes.
+    # Create simulator instance
+    simulator = CarSimulator()
+
+    # Then use it where needed
+    results = simulator.run_simulation(target_speed=20, target_power=500)
+
+    #With the total time the first simuation took, query the corresponsing data from redis and do data process to remove outliers and copmute means.
+
+    #Feed new values into simulation and run again.
+
+    #Repeat.
+
+    #Every 30 minutes, when the car it leaves certain radius distance, all of the weather data queryed from the API is irrelavant. 
+    #So we pull the predicted distance travelled, and look up the approximate position in the lookup table, and feed that position into the API function and feed the resulting irridance data into the simulation.
+    #SOC, Pack_power, ghi, cloud_opacity.
+    #When we look up weather data, our total irridance will be the Global Horizontal Irridance (ghi) multiplied by the Cloud Opacity(cloud_opacity).
+    #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    
+    #Obtaining weather data from the Grand Canyon
+    #get_weather_data(36.099763, -112.112485, 5)
+    #extractVars.launch_live_graph()
+
+    # extracted_variables = extractVars.record_multiple_data(3, input_variables)
+    # means = dprocess.process_recorded_values(extracted_variables, input_variables)
+
+    # print(type(means))
+    # print(means)
+
+    # df = pd.read_csv("solar_car_telemetry/src/solcast/output.csv")
+    # print(df)
+
+    print("Finished.")
