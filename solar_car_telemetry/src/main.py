@@ -39,6 +39,7 @@ if __name__ == "__main__":
     #Every 30 minutes, when the car it leaves certain radius distance, all of the weather data queryed from the API is irrelavant. 
     #So we pull the predicted distance travelled, and look up the approximate position in the lookup table, and feed that position into the API function and feed the resulting irridance data into the simulation.
     #SOC, Pack_power, ghi, cloud_opacity.
+    #When we look up weather data, our total irridance will be the Global Horizontal Irridance (ghi) multiplied by the Cloud Opacity(cloud_opacity).
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     
