@@ -7,7 +7,7 @@ Specifically, the system will take the following data measured in our solar car,
 ## Project Structure
 
 ```
-solar_car_telemetry/
+data_pipeline/
 │
 ├── EDashboard Start Instructions.txt
 ├── README.md

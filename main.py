@@ -4,10 +4,9 @@
 # import time
 # import ctypes
 
-from dataExtract import extractVars
-from dataExtract.NearestKeyDict import NearestKeyDict
+from data_pipeline.dataExtract import extractVars, NearestKeyDict
 # from dataProcess import dataProcess as dprocess
-from simulinkPlugin.plugin import CarSimulator
+from data_pipeline.simulinkPlugin.plugin import CarSimulator
 # from dataProcess import constants as const
 # from solcast import get_weather_data
 
