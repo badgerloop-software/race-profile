@@ -156,21 +156,39 @@ Specifically, the system will take the following data measured in our solar car,
 
 ### dataProcess
 This package handles the processing and transformation of raw data:
-- **dataProcess.py**: Remove outliers across all the variables requested using the Interquartile Range (IQR) Method.
-- **constants.py** and **data_loader.py**: These files are a legacy from the setup.m file.
+- **dataProcess.py**: Remove outliers across all the variables requested using the Interquartile Range (IQR) Method (Currently in `remove_outliers()`).
+
+Next, compute a mean average of these variables (Currently in `process_recorded_values()`).
+
+- **constants.py** and **data_loader.py**: These files are a legacy from the setup.m file, and may be used when starting the sumulation. This is to be determined as we are working on integration with Simulink.
+
 - **testData/**: Directory containing CSV files with test data and constants for development and testing:
   - Battery constants, drag coefficients, parameter lists, and sample speed profiles
 
 ### dataExtract
-This package interfaces with the Engineering Dashboard's Redis database:
-- **extractVars.py**: While one round of the simulation is recording, we are saving the value of each variable for a given unit of time that we can set(like every 0.5 seconds). The result is a numpy array for each variable quereyed holding values collected across the time that the simulation ran.
+
+There are two things that dataExtract handles. One is the live data in Redis database, and the other is the route data.
+- **extractVars.py**: 
+Redis Data Extraction (Currently in `record_multiple_data()`):
+
+While one round of the simulation is recording, we are saving the value of each variable for a given unit of time that we can set(like every 0.5 seconds). The result is a numpy array for each variable quereyed holding values collected across the time that the simulation ran.
 
 The Redis python documentation needs to be looked into more as there is a way to just query the variables using Unix timestamps.
-The format the data is stored in when data generator is run is slightly different, and this needs to be handled
+The format the data is stored in Redis when engineering dashboard is run is slightly different, and this needs to be handled properly.
+
+Competition Route Data (Currently in `open_route()`):
+
+We open the route data from the file `ASC2022_A.csv` in the `solcast` folder and produce a dictionary with distance travelled as the key, and a tuple of (latitude, longitude) as the value.
+
+- **NearestKeyDict.py**: This is a custom dictionary class that allows us to lookup values that do not exactly match a key in the dictionary. Instead, when you attempt to look up a value that does not match a key, this input value will be matched to the key that is numerically closest to it, and return the approximate lattitude and longitude along the route.
+
+This is crucial as we are expectting the simulation to almost always give intermediate values for simulated distance travelled.
 
 ### simulinkPlugin
-This package  will provide integration with MATLAB/Simulink:
-- **simulinkPlugin.py**: Will contain functionality to prepare and export processed data to Simulink and retrieve simulation results
+This package will provide integration with MATLAB/Simulink:
+- **simulinkPlugin.py**: Will contain functionality to prepare and export processed data to Simulink and retrieve simulation results.
+
+We are using MathWork's example [here](https://github.com/mathworks/Call-Simulink-from-Python) for integration.
 
 ### solcast
 This package interfaces with solar forecast APIs to obtain weather and solar irradiance predictions:
