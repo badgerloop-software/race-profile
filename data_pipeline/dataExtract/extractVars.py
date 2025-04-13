@@ -98,7 +98,7 @@ def record_multiple_data(time_seconds=2, sampling_frequency = 0.5, variables=['s
         time.sleep(sampling_frequency)
     return data
 
-def open_route(route_file="solar_car_telemetry/src/solcast/ASC2022_A.csv"):
+def open_route(route_file="data_pipeline/solcast/ASC2022_A.csv"):
     """
     Opens route data from file to produce dictionary.
 
