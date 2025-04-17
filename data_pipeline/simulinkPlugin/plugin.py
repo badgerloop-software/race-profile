@@ -5,18 +5,18 @@ import sys
 
 # Add the package directory to Python path
 car_sim_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 
-                           "car2_package", "Lib", "site-packages")
+                           "car_package", "Lib", "site-packages")
 if car_sim_path not in sys.path:
     sys.path.append(car_sim_path)
 
-import car_sim
+import car1_sim
 
 class CarSimulator:
     """Wrapper for the MATLAB-generated car simulation"""
     
     def __init__(self):
         """Initialize the MATLAB runtime and simulation"""
-        self.matlab_instance = car_sim.initialize()
+        self.matlab_instance = car1_sim.initialize()
     
     def run_simulation(self, target_speed=20, target_power=500, control_mode=1, start_soc=1.0):
         """
@@ -55,7 +55,7 @@ class CarSimulator:
 # Example usage
 if __name__ == "__main__":
     # Initialize the package
-    instance = car_sim.initialize()
+    instance = car1_sim.initialize()
     
     # Print all available methods (excluding private ones)
     print("Available methods:")

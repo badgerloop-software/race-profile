@@ -1,8 +1,8 @@
 # import numpy as np
-# import matlab
 # import pandas as pd
 # import time
 # import ctypes
+from config import config
 
 from data_pipeline.dataExtract import extractVars, NearestKeyDict
 # from dataProcess import dataProcess as dprocess
@@ -12,22 +12,23 @@ from data_pipeline.simulinkPlugin.plugin import CarSimulator
 
 
 if __name__ == "__main__":
-    #Take note of Input variables
-    input_variables=['soc', 'pack_power', 'air_temp']
-    #Open Route data into lookup table
-    route = extractVars.open_route()
-    # print(route)
 
-    enhanced_route = NearestKeyDict(route)
-    print(enhanced_route[200000][0]) 
-    print(enhanced_route[200000][1])
-    #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    #Run the sumulation and time how long it takes.
-    # Create simulator instance
-    simulator = CarSimulator()
+    # #Take note of Input variables
+    # input_variables=['soc', 'pack_power', 'air_temp']
+    # #Open Route data into lookup table
+    # route = extractVars.open_route()
+    # # print(route)
 
-    # Then use it where needed
-    results = simulator.run_simulation(target_speed=20, target_power=500)
+    # enhanced_route = NearestKeyDict(route)
+    # print(enhanced_route[200000][0]) 
+    # print(enhanced_route[200000][1])
+    # #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # #Run the sumulation and time how long it takes.
+    # # Create simulator instance
+    # simulator = CarSimulator()
+
+    # # Then use it where needed
+    # results = simulator.run_simulation(target_speed=20, target_power=500)
 
     #With the total time the first simuation took, query the corresponsing data from redis and do data process to remove outliers and copmute means.
 

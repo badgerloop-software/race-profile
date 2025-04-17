@@ -62,16 +62,16 @@ class InstallAndCleanBuildArea(install):
     
 if __name__ == '__main__':
     setup_dict = {
-        'name': 'car_sim-R2024b',
+        'name': 'car1_sim-R2024b',
         'version': '24.2',
-        'description': 'A Python interface to car_sim',
+        'description': 'A Python interface to car1_sim',
         'author': 'MathWorks',
         'url': 'https://www.mathworks.com/',
         'platforms': ['Linux', 'Windows', 'macOS'],
         'packages': [
-            'car_sim'
+            'car1_sim'
         ],
-        'package_data': {'car_sim': ['*.ctf']}
+        'package_data': {'car1_sim': ['*.ctf']}
     }
     
     if not 'bdist_wheel' in sys.argv[1:]:

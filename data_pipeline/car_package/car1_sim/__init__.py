@@ -19,7 +19,7 @@ class _PathInitializer(object):
     SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
     RUNTIME_VERSION_W_DOTS = '24.2'
     RUNTIME_VERSION_W_UNDERSCORES = '24_2'
-    PACKAGE_NAME = 'car_sim'
+    PACKAGE_NAME = 'car1_sim'
     
     def set_interpreter_version(self):    
         """Make sure the interpreter version is supported."""

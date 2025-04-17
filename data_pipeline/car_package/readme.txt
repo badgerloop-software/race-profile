@@ -1,4 +1,4 @@
-car_sim MATLAB Python Package
+car1_sim MATLAB Python Package
 
 1. Prerequisites for Deployment 
 
@@ -22,9 +22,9 @@ in the MathWorks Documentation Center.
 
 Verify that a Windows version of Python 3.9, 3.10, 3.11, and/or 3.12 is installed.
 
-2. Installing the car_sim Package
+2. Installing the car1_sim Package
 
-A. Change to the directory that contains the file setup.py and the subdirectory car_sim. 
+A. Change to the directory that contains the file setup.py and the subdirectory car1_sim. 
 If you do not have write permissions, copy all its contents to a temporary location and 
 change to that directory.
 
@@ -40,11 +40,11 @@ the PYTHONPATH environment variable. For details, refer to:
     https://docs.python.org/3/installing/index.html
 
 
-3. Using the car_sim Package
+3. Using the car1_sim Package
 
-The car_sim package is on your Python path. To import it into a Python script or session, 
-execute:
+The car1_sim package is on your Python path. To import it into a Python script or 
+session, execute:
 
-    import car_sim
+    import car1_sim
 
 If a namespace must be specified for the package, modify the import statement accordingly.
