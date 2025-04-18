@@ -2,16 +2,26 @@
 # import pandas as pd
 # import time
 # import ctypes
-from config import config
+# from data_pipeline.simulinkPlugin.config import constants
+# import logging
 
 from data_pipeline.dataExtract import extractVars, NearestKeyDict
 # from dataProcess import dataProcess as dprocess
-from data_pipeline.simulinkPlugin.plugin import CarSimulator
+from data_pipeline.simulinkPlugin import plugin
 # from dataProcess import constants as const
 # from solcast import get_weather_data
 
 
 if __name__ == "__main__":
+    # logging.basicConfig(
+    # level=logging.INFO,
+    # format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    # )
+    # logger = logging.getLogger(__name__)
+    # logger.info("Initializing...")
+    
+    #plugin.load_constants()
+    plugin.retreive_constants()
 
     # #Take note of Input variables
     # input_variables=['soc', 'pack_power', 'air_temp']
