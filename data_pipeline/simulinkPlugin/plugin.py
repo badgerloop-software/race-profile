@@ -1,5 +1,6 @@
 import matlab.engine
-# from data_pipeline.simulinkPlugin.config import constants
+import numpy as np
+from data_pipeline.simulinkPlugin.config import constants
 
 # Start the MATLAB engine
 print("Starting MATLAB Engine...")
@@ -10,10 +11,29 @@ def load_constants():
     try:
         for key, value in constants.items():
             eng.workspace[key] = value
-            print(f"Set {key} = {value} in MATLAB workspace.")
+            value_str = str(value)
+            str_len = len(value_str)
+            print(f"Set {key} = {(value_str[:40] + "..." + value_str[-40:]) if str_len > 200 else value} in MATLAB workspace.")
 
     except Exception as e:
         print(f"An error occurred: {e}")
+
+def load_model():
+    # Change the current working directory to where the model is located
+    model_path = 'Simulation\Car.slx'  # Replace with the path to your model
+    eng.cd(model_path)
+
+    # Load and simulate the model
+    model_name = 'Car'  # Model name without the .slx extension
+    eng.load_system(model_name)
+
+    # Allocate res list to hold the results from 4 calls to sim_the_model
+    res = [0]*4;
+
+    ## 1st sim: with default parameter values
+    res[0] = eng.Car()
+
+    eng.sim(model_name)
 
 def retreive_new():
     try:

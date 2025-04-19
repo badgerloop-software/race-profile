@@ -2,10 +2,11 @@
 # import pandas as pd
 # import time
 # import ctypes
-# from data_pipeline.simulinkPlugin.config import constants
+from data_pipeline.simulinkPlugin.config import constants
+import matlab.engine
 # import logging
 
-from data_pipeline.dataExtract import extractVars, NearestKeyDict
+# from data_pipeline.dataExtract import extractVars, NearestKeyDict
 # from dataProcess import dataProcess as dprocess
 from data_pipeline.simulinkPlugin import plugin
 # from dataProcess import constants as const
@@ -20,8 +21,8 @@ if __name__ == "__main__":
     # logger = logging.getLogger(__name__)
     # logger.info("Initializing...")
     
-    #plugin.load_constants()
-    plugin.retreive_constants()
+    plugin.load_constants()
+    # plugin.retreive_constants()
 
     # #Take note of Input variables
     # input_variables=['soc', 'pack_power', 'air_temp']

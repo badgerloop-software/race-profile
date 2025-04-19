@@ -1,6 +1,8 @@
 import math
 from datetime import datetime
 import numpy as np
+import pandas as pd
+import matlab.engine
 
 constants = {
     # Data Sources
@@ -123,6 +125,49 @@ constants.update({
 # COURSE_DATA = COURSE_DATA(COURSE_FILTER, :);
 # INT_DISTANCES = COURSE_DATA(:, 8) / UNIT_TO_KILO; % Converto to m
 # INT_GRADE_ANGLE = rad2deg(atan(COURSE_DATA(:, 7)/100)); % convert % to deg
+
+course_data_df = pd.read_csv(constants["COURSE_DATA_FILE"], header=0)
+
+# MATLAB‑style fixes (1‐based → 0‐based indices)
+course_data_df.iloc[0, 5] = course_data_df.iloc[1, 5]   # first heading = second
+course_data_df.iloc[0, 6] = 0                          # first slope = 0
+course_data_df.iloc[0, 8] = 0                          # first interval = 0
+
+# Compute NANS on column 7 (zero‑based idx 6)
+nans_bool = course_data_df.iloc[:, 6].isna()
+
+# Compute DUPLICATES on column 8 (zero‑based idx 7)
+duplicates_bool = course_data_df.iloc[:, 7].diff().eq(0)
+
+# Push boolean arrays into constants (as MATLAB logicals)
+constants.update({
+    "NANS":      matlab.logical(nans_bool.tolist()),
+    "DUPLICATES": matlab.logical(duplicates_bool.tolist()),
+})
+
+# Filter out those rows
+mask = ~nans_bool & ~duplicates_bool
+filtered_df = course_data_df[mask]
+
+# 1) Push the filter mask itself
+constants.update({
+    "COURSE_FILTER": matlab.logical(mask.tolist()),
+})
+
+# 2) Compute and push INT_DISTANCES & INT_GRADE_ANGLE
+int_distances   = (filtered_df.iloc[:, 7] / constants["UNIT_TO_KILO"]).tolist()
+int_grade_angle = np.degrees(np.arctan(filtered_df.iloc[:, 6] / 100)).tolist()
+
+constants.update({
+    "INT_DISTANCES":   matlab.double(int_distances),
+    "INT_GRADE_ANGLE": matlab.double(int_grade_angle),
+})
+
+# 3) Finally, overwrite COURSE_DATA with the filtered rows
+numeric_data = filtered_df.select_dtypes(include=[np.number]).values.astype(float).tolist()
+constants.update({
+    "COURSE_DATA": matlab.double(numeric_data),
+})
 
 # Tire Data
 constants.update({
