@@ -141,7 +141,7 @@ PRESSURE = 500 / UNIT_TO_KILO; % Pa
 SOLAR_TIME_BREAKPOINTS = START_TIME:900:END_TIME;
 FORECASTED_IRRADIANCE = -5*((SOLAR_TIME_BREAKPOINTS-START_TIME).*(SOLAR_TIME_BREAKPOINTS-END_TIME) / (PROFILE_LENGTH/2)^2);%500 * ones(size(SOLAR_TIME_BREAKPOINTS));
 
-outputName = 'Outputs/results.csv';
-simulation = sim("Car.slx");
-out = simulation.logsout;
+%outputName = 'Outputs/results.csv';
+%simulation = sim("Car.slx");
+%out = simulation.logsout;
 
