@@ -22,7 +22,7 @@ try
     fprintf('Using car_simulation from: %s\n', carSimPath);
     
     % Use consistent directory name (car_sim_package)
-    outDir = fullfile(origDir,'solar_car_telemetry\src','car2_package');
+    outDir = fullfile(origDir,'data_pipeline','car_package');
     if exist(outDir,'dir')
         rmdir(outDir,'s');
     end
@@ -31,7 +31,7 @@ try
     fprintf('Starting Python package build to %s...\n', outDir);
     try
         compiler.build.pythonPackage(carSimPath, ...
-            'PackageName','car_sim', ...
+            'PackageName','car1_sim', ...
             'OutputDir',outDir, ...
             'Verbose', true);  % Add verbose flag
         fprintf('Python package build completed successfully\n');
@@ -43,7 +43,7 @@ try
     %% Display the command to run to install the generated python package
     fprintf('\n==> Run the commands below to install the Python package:\n');
     fprintf('cd "%s"\n', outDir);
-    pkgDir = fullfile(origDir,'solar_car_telemetry\src','car2_package');
+    pkgDir = fullfile(origDir,'data_pipeline','car_package');
     fprintf('python setup.py install --prefix="%s"\n\n', pkgDir);
 
 catch ME

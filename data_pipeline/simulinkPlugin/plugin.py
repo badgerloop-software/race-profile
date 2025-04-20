@@ -1,67 +1,72 @@
-"""Interface to the car simulation MATLAB package"""
+import matlab.engine
+import numpy as np
+from data_pipeline.simulinkPlugin.config import constants
 
-import os
-import sys
+# Start the MATLAB engine
+print("Starting MATLAB Engine...")
+eng = matlab.engine.start_matlab()
+print("MATLAB engine started.")
 
-# Add the package directory to Python path
-car_sim_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 
-                           "car2_package", "Lib", "site-packages")
-if car_sim_path not in sys.path:
-    sys.path.append(car_sim_path)
+def load_constants():
+    try:
+        for key, value in constants.items():
+            eng.workspace[key] = value
+            value_str = str(value)
+            str_len = len(value_str)
+            print(f"Set {key} = {(value_str[:40] + "..." + value_str[-40:]) if str_len > 200 else value} in MATLAB workspace.")
+        print("")
 
-import car_sim
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
-class CarSimulator:
-    """Wrapper for the MATLAB-generated car simulation"""
-    
-    def __init__(self):
-        """Initialize the MATLAB runtime and simulation"""
-        self.matlab_instance = car_sim.initialize()
-    
-    def run_simulation(self, target_speed=20, target_power=500, control_mode=1, start_soc=1.0):
-        """
-        Run the car simulation with the given parameters
-        
-        Parameters:
-        - target_speed: Target speed in m/s
-        - target_power: Power in kW
-        - control_mode: 0 for speed control, 1 for power control
-        - start_soc: Starting battery state of charge (0-1)
-        
-        Returns:
-            Simulation results or None if error
-        """
-        try:
-            # Use the car_simulation function (not setuptest)
-            results = self.matlab_instance.car_simulation(
-                TargetSpeed=target_speed,
-                TargetPower=target_power,
-                ControlMode=control_mode,
-                StartSoc=start_soc
-            )
-            return results
-        except Exception as e:
-            print(f"Error running simulation: {e}")
-            return None
-    
-    def __del__(self):
-        """Clean up MATLAB runtime"""
-        if hasattr(self, 'matlab_instance'):
-            try:
-                self.matlab_instance.terminate()
-            except:
-                pass
+def load_model():
+    # Change the current working directory to where the model is located
+    model_path = 'Simulation/Car.slx'  # Replace with the path to your model
+    eng.cd(model_path)
 
-# Example usage
-if __name__ == "__main__":
-    # Initialize the package
-    instance = car_sim.initialize()
-    
-    # Print all available methods (excluding private ones)
-    print("Available methods:")
-    methods = [m for m in dir(instance) if not m.startswith('_')]
-    for method in methods:
-        print(f"  - {method}")
-        
-    # Clean up
-    instance.terminate()
+    # Load and simulate the model
+    model_name = 'Car'  # Model name without the .slx extension
+    eng.load_system(model_name)
+
+    # Allocate res list to hold the results from 4 calls to sim_the_model
+    res = [0]*4;
+
+    ## 1st sim: with default parameter values
+    res[0] = eng.Car()
+
+    eng.sim(model_name)
+
+def retreive_constants():
+    try:
+        # Get all variable names
+        print("Retreiving Constants...")
+        variable_names = eng.who()
+        # Retrieve all variables and their values into a dictionary
+        workspace_dict = {}
+        for var_name in variable_names:
+            value = eng.workspace[var_name]
+            # Convert MATLAB arrays to Python lists
+            if isinstance(value, matlab.double):
+                value = np.array(value).tolist()
+            workspace_dict[var_name] = value
+
+        # Print the results
+        print("MATLAB workspace variables:")
+        for key, value in workspace_dict.items():
+            value_str = str(value)
+            str_len = len(value_str)
+            print(f"{key}: {(value_str[:40] + "..." + value_str[-40:]) if str_len > 200 else value}")
+        print("")    
+    except Exception as e:
+        print(f"An error occurred: {e}")   
+
+def close_workspace():
+    # Close the MATLAB engine
+    eng.quit()
+    print("MATLAB engine closed.")
+
+if __name__ == '__main__':
+    from config import constants
+    load_constants()
+    retreive_constants()
+    close_workspace()

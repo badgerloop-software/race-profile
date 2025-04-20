@@ -1,33 +1,45 @@
 # import numpy as np
-# import matlab
 # import pandas as pd
 # import time
 # import ctypes
+from data_pipeline.simulinkPlugin.config import constants
+import matlab.engine
+# import logging
 
-from data_pipeline.dataExtract import extractVars, NearestKeyDict
+# from data_pipeline.dataExtract import extractVars, NearestKeyDict
 # from dataProcess import dataProcess as dprocess
-from data_pipeline.simulinkPlugin.plugin import CarSimulator
+from data_pipeline.simulinkPlugin import plugin
 # from dataProcess import constants as const
 # from solcast import get_weather_data
 
 
 if __name__ == "__main__":
-    #Take note of Input variables
-    input_variables=['soc', 'pack_power', 'air_temp']
-    #Open Route data into lookup table
-    route = extractVars.open_route()
-    # print(route)
+    # logging.basicConfig(
+    # level=logging.INFO,
+    # format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    # )
+    # logger = logging.getLogger(__name__)
+    # logger.info("Initializing...")
+    
+    plugin.load_constants()
+    plugin.retreive_constants()
 
-    enhanced_route = NearestKeyDict(route)
-    print(enhanced_route[200000][0]) 
-    print(enhanced_route[200000][1])
-    #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    #Run the sumulation and time how long it takes.
-    # Create simulator instance
-    simulator = CarSimulator()
+    # #Take note of Input variables
+    # input_variables=['soc', 'pack_power', 'air_temp']
+    # #Open Route data into lookup table
+    # route = extractVars.open_route()
+    # # print(route)
 
-    # Then use it where needed
-    results = simulator.run_simulation(target_speed=20, target_power=500)
+    # enhanced_route = NearestKeyDict(route)
+    # print(enhanced_route[200000][0]) 
+    # print(enhanced_route[200000][1])
+    # #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # #Run the sumulation and time how long it takes.
+    # # Create simulator instance
+    # simulator = CarSimulator()
+
+    # # Then use it where needed
+    # results = simulator.run_simulation(target_speed=20, target_power=500)
 
     #With the total time the first simuation took, query the corresponsing data from redis and do data process to remove outliers and copmute means.
 
