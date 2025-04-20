@@ -1,6 +1,6 @@
 import matlab.engine
 import numpy as np
-from config import constants
+from data_pipeline.simulinkPlugin.config import constants
 
 # Start the MATLAB engine
 print("Starting MATLAB Engine...")
