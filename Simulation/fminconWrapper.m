@@ -1,5 +1,11 @@
 %fminconWrapper.m 
 
+% ── Add Simulation folder to your path ────────────────────────────────────────
+[thisFile,~,~] = fileparts( mfilename('fullpath') );  
+simFolder     = fullfile( thisFile, '..', 'Simulation' );  
+addpath( simFolder );  
+
+
 %--- Set up optimization ---
 initialGuess = 500;      % Initial guess for target power (kW) - adjust as needed
 lowerBound = 100;       % Lower bound for target power (kW) - adjust as needed
