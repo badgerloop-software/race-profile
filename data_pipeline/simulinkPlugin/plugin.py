@@ -1,6 +1,6 @@
 import matlab.engine
 import numpy as np
-from data_pipeline.simulinkPlugin.config import constants
+from config import constants
 
 # Start the MATLAB engine
 print("Starting MATLAB Engine...")
@@ -21,7 +21,7 @@ def load_constants():
 
 def load_model():
     # Change the current working directory to where the model is located
-    model_path = 'Simulation\Car.slx'  # Replace with the path to your model
+    model_path = 'Simulation/Car.slx'  # Replace with the path to your model
     eng.cd(model_path)
 
     # Load and simulate the model
