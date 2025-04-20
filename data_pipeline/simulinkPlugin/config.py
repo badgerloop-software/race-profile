@@ -10,6 +10,13 @@ constants = {
     "ECO_DATA_FILE": "Data/MotorDataEco.csv",
     "POWER_DATA_FILE": "Data/MotorDataEco.csv",  # Replace later
 
+    #From config.csv
+    # courseDataFile,course_data/ASC_2024/ASC_2024_A.csv'
+    # weatherDataFile,
+    # ecoDataFile,Data/MotorDataEco.csv'
+    # powerDataFile,Data/MotorDataEco.csv'
+
+
     #Constants used for Car Sim
 
     # Non-Configurable Constants
@@ -179,6 +186,59 @@ constants.update({
 # Solar Data - using lambda for dynamic calculation
 constants.update({
     "SOLAR_TIME_BREAKPOINTS": np.arange(constants['START_TIME'], constants['END_TIME'] + 1, 900).tolist(),
+})
+
+# --- Motor Eco Mode data -----------------------------------------------
+eco_df = pd.read_csv(constants["ECO_DATA_FILE"], header=0)
+constants.update({
+    "ECO_DATA": matlab.double(eco_df.values.tolist())
+})
+
+current_data_eco   = eco_df.iloc[:, 0].astype(float)
+torques_data_eco   = eco_df.iloc[:, 1].astype(float)
+rpm_data_eco       = eco_df.iloc[:, 2].astype(float)
+
+rpm_breakpoints_eco = rpm_data_eco.iloc[::-1]
+max_currents_eco    = current_data_eco.iloc[::-1]
+
+constants.update({
+    "REGEN_ON":               0,
+    "CURRENT_DATA_ECO":       current_data_eco.tolist(),
+    "TORQUES_DATA_ECO":       torques_data_eco.tolist(),
+    "RPM_DATA_ECO":           rpm_data_eco.tolist(),
+    "RPM_BREAKPOINTS_ECO":    rpm_breakpoints_eco.tolist(),
+    "MAX_CURRENTS_ECO":       max_currents_eco.tolist(),
+    "NO_TORQUE_CURRENT_ECO":  float(current_data_eco.iloc[0]),
+    "MIN_CURRENT_ECO":        float(current_data_eco.min()),
+    "MAX_CURRENT_ECO":        float(current_data_eco.max()),
+    "MAX_TORQUE_ECO":         float(torques_data_eco.max()),
+    "MAX_RPM_ECO":            float(rpm_data_eco.max()),
+})
+
+# --- Motor Power Mode data ---------------------------------------------
+power_df = pd.read_csv(constants["POWER_DATA_FILE"], header=0)
+constants.update({
+    "POWER_DATA": matlab.double(power_df.values.tolist())
+})
+
+current_data_power   = power_df.iloc[:, 0].astype(float)
+torques_data_power   = (power_df.iloc[:, 1].astype(float) * 2.5)
+rpm_data_power       = power_df.iloc[:, 2].astype(float)
+
+rpm_breakpoints_power = rpm_data_power.iloc[::-1]
+max_currents_power    = current_data_power.iloc[::-1]
+
+constants.update({
+    "CURRENT_DATA_POWER":       current_data_power.tolist(),
+    "TORQUES_DATA_POWER":       torques_data_power.tolist(),
+    "RPM_DATA_POWER":           rpm_data_power.tolist(),
+    "RPM_BREAKPOINTS_POWER":    rpm_breakpoints_power.tolist(),
+    "MAX_CURRENTS_POWER":       max_currents_power.tolist(),
+    "NO_TORQUE_CURRENT_POWER":  float(current_data_power.iloc[0]),
+    "MIN_CURRENT_POWER":        float(current_data_power.min()),
+    "MAX_CURRENT_POWER":        float(current_data_power.max()),
+    "MAX_TORQUE_POWER":         float(torques_data_power.max()),
+    "MAX_RPM_POWER":            float(rpm_data_power.max()),
 })
 
 # Function to calculate the forecasted irradiance

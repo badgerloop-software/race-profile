@@ -14,6 +14,7 @@ def load_constants():
             value_str = str(value)
             str_len = len(value_str)
             print(f"Set {key} = {(value_str[:40] + "..." + value_str[-40:]) if str_len > 200 else value} in MATLAB workspace.")
+        print("")
 
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -35,7 +36,7 @@ def load_model():
 
     eng.sim(model_name)
 
-def retreive_new():
+def retreive_constants():
     try:
         # Get all variable names
         print("Retreiving Constants...")
@@ -52,7 +53,10 @@ def retreive_new():
         # Print the results
         print("MATLAB workspace variables:")
         for key, value in workspace_dict.items():
-            print(f"{key}: {value}")
+            value_str = str(value)
+            str_len = len(value_str)
+            print(f"{key}: {(value_str[:40] + "..." + value_str[-40:]) if str_len > 200 else value}")
+        print("")    
     except Exception as e:
         print(f"An error occurred: {e}")   
 
@@ -64,5 +68,5 @@ def close_workspace():
 if __name__ == '__main__':
     from config import constants
     load_constants()
-    retreive_new()
+    retreive_constants()
     close_workspace()
