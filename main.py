@@ -22,7 +22,7 @@ if __name__ == "__main__":
     # logger.info("Initializing...")
     
     plugin.load_constants()
-    plugin.retreive_constants()
+    plugin.run_simulation()
 
     # #Take note of Input variables
     # input_variables=['soc', 'pack_power', 'air_temp']

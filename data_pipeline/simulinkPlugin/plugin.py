@@ -2,39 +2,37 @@ import matlab.engine
 import numpy as np
 from data_pipeline.simulinkPlugin.config import constants
 
+import os
+_this = os.path.dirname(__file__)
+project_root = os.path.abspath(os.path.join(_this, os.pardir, os.pardir, os.pardir))
+sim_folder   = os.path.join(project_root, "race-profile", "Simulation")
+
+# print(f"Project_root: {project_root}")
+# print(f"sim_folder: {sim_folder}")
+
 # Start the MATLAB engine
 print("Starting MATLAB Engine...")
 eng = matlab.engine.start_matlab()
-print("MATLAB engine started.")
+eng.addpath(sim_folder, nargout=0)
+model_file = os.path.join(sim_folder, "Car.slx")
+model = "Car"
+eng.load_system(model_file, nargout=0)
+print("MATLAB engine started, Car model loaded.")
 
 def load_constants():
+    print("Loading input variables...")
     try:
         for key, value in constants.items():
             eng.workspace[key] = value
             value_str = str(value)
             str_len = len(value_str)
-            print(f"Set {key} = {(value_str[:40] + "..." + value_str[-40:]) if str_len > 200 else value} in MATLAB workspace.")
-        print("")
+            ## Uncomment below line to see which variables are being loaded.
+            #print(f"Set {key} = {(value_str[:40] + "..." + value_str[-40:]) if str_len > 200 else value} in MATLAB workspace.")
+        print("Loaded all variables to MATLAB workspace.")
 
     except Exception as e:
         print(f"An error occurred: {e}")
 
-def load_model():
-    # Change the current working directory to where the model is located
-    model_path = 'Simulation/Car.slx'  # Replace with the path to your model
-    eng.cd(model_path)
-
-    # Load and simulate the model
-    model_name = 'Car'  # Model name without the .slx extension
-    eng.load_system(model_name)
-
-    # Allocate res list to hold the results from 4 calls to sim_the_model
-    res = [0]*4;
-
-    ## 1st sim: with default parameter values
-    res[0] = eng.Car()
-
-    eng.sim(model_name)
 
 def retreive_constants():
     try:
@@ -58,7 +56,13 @@ def retreive_constants():
             print(f"{key}: {(value_str[:40] + "..." + value_str[-40:]) if str_len > 200 else value}")
         print("")    
     except Exception as e:
-        print(f"An error occurred: {e}")   
+        print(f"An error occurred: {e}")
+
+def run_simulation():
+    # 2  Kick off the simulation
+    print("Running the Simulation...")
+    sim_out = eng.sim(model,'StopTime', str(constants['PROFILE_LENGTH']), nargout=1)
+    return sim_out
 
 def close_workspace():
     # Close the MATLAB engine
