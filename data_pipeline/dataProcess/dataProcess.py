@@ -14,14 +14,14 @@ def loadIntoPandas(csv_filename = 'solar_car_telemetry/src/dataProcess/testData/
     df1 = pd.read_csv(csv_filename)
     return df1 
 
-def extractTimeSeries(startTime: int, endTime: int):
-    """
-    Extract data from the time series data (and return a Pandas dataframe).
-    """
-    r = redis.Redis()
-    data = r.ts().range('time_series', startTime, endTime)
-    df = pd.DataFrame(data, columns=['timestamp', 'value'])
-    return df
+# def extractTimeSeries(startTime: int, endTime: int):
+#     """
+#     Extract data from the time series data (and return a Pandas dataframe).
+#     """
+#     r = redis.Redis()
+#     data = r.ts().range('time_series', startTime, endTime)
+#     df = pd.DataFrame(data, columns=['timestamp', 'value'])
+#     return df
 
 def remove_outliers(numpy_array: np.array):
     """

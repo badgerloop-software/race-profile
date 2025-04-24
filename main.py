@@ -4,6 +4,7 @@
 # import ctypes
 from data_pipeline.simulinkPlugin.config import constants
 import matlab.engine
+import numpy as np
 # import logging
 
 # from data_pipeline.dataExtract import extractVars, NearestKeyDict
@@ -14,15 +15,51 @@ from data_pipeline.simulinkPlugin import plugin
 
 
 if __name__ == "__main__":
-    # logging.basicConfig(
-    # level=logging.INFO,
-    # format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    # )
-    # logger = logging.getLogger(__name__)
-    # logger.info("Initializing...")
+#     # logging.basicConfig(
+#     # level=logging.INFO,
+#     # format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+#     # )
+#     # logger = logging.getLogger(__name__)
+#     # logger.info("Initializing...")
+
+#     print("--- Debugging Constants ---")
+#     keys_to_check = [
+#         "MAX_CURRENTS_ECO",
+#         "MAX_CURRENTS_POWER",
+#         "SOLAR_TIME_BREAKPOINTS",
+#         "REGEN_ON"  # Add REGEN_ON to debug output
+#     ]
+    
+#     # Add type checking/conversion before simulation
+#     if "REGEN_ON" in constants:
+#         # Convert to MATLAB logical type if it's not already
+#         if not isinstance(constants["REGEN_ON"], matlab.logical):
+#             constants["REGEN_ON"] = matlab.logical([bool(constants["REGEN_ON"])])
+#     else:
+#         # Set default value if not present
+#         constants["REGEN_ON"] = matlab.logical([False])
+
+#     # Existing debugging code
+#     for key in keys_to_check:
+#         if key in constants:
+#             value = constants[key]
+#             print(f"Key: {key}")
+#             print(f"  Type: {type(value)}")
+#             if isinstance(value, (list, np.ndarray, matlab.double)):
+#                 if isinstance(value, matlab.double):
+#                     print(f"  Value: {value}")
+#                 else:
+#                     print(f"  Length/Shape: {len(value) if isinstance(value, list) else value.shape}")
+#                     print(f"  Sample Value: {value[:5] if isinstance(value, list) else value[:5,:]}")
+#             else:
+#                 print(f"  Value: {value}")
+#         else:
+#             print(f"Key: {key} - NOT FOUND in constants")
+#     print("--- End Debugging ---")
     
     plugin.load_constants()
-    plugin.run_simulation()
+    plugin.retreive_constants()
+#     plugin.run_simulation()
 
     # #Take note of Input variables
     # input_variables=['soc', 'pack_power', 'air_temp']
