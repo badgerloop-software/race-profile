@@ -1,10 +1,11 @@
 # import numpy as np
-# import pandas as pd
-# import time
+import pandas as pd
+import time
 # import ctypes
 from data_pipeline.simulinkPlugin.config import constants
 import matlab.engine
 import numpy as np
+import matplotlib.pyplot as plt
 # import logging
 
 # from data_pipeline.dataExtract import extractVars, NearestKeyDict
@@ -15,6 +16,7 @@ from data_pipeline.simulinkPlugin import plugin
 
 
 if __name__ == "__main__":
+    start_time = time.time()
 #     # logging.basicConfig(
 #     # level=logging.INFO,
 #     # format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -59,32 +61,66 @@ if __name__ == "__main__":
     
     plugin.load_constants()
         
-    # Run simulation and get the processed output dictionary
-    simulation_results = plugin.run_simulation() 
+    # Run simulation
+    tout, velocity_data, velocity_name = plugin.run_simulation()
+
+    #Close Workspace
+    plugin.close_workspace()
+
+    print(f"Velocity Data Type: {type(velocity_data)}")
+    print(f"Velocity Length: {len(velocity_data)}")
+
+    # --- Save data to CSV ---
+    try:
+        # Create a dictionary for the DataFrame
+        data_to_save = {'Time (s)': tout.flatten(), velocity_name: velocity_data.flatten()}
+        df = pd.DataFrame(data_to_save)
+        
+        # Define the output CSV file path
+        output_csv_path = 'Outputs/simulation_velocity_output.csv' 
+        
+        # Save the DataFrame to CSV, excluding the index column
+        df.to_csv(output_csv_path, index=False)
+        print(f"Simulation data saved to {output_csv_path}")
+        
+    except Exception as e:
+        print(f"Error saving data to CSV: {e}")
+    # --- End save data to CSV ---
+
+    # Plot velocity
+    plt.figure()
+    plt.plot(tout, velocity_data, label=velocity_name)
+    plt.xlabel('Time (s)')
+    plt.ylabel('Velocity [m/s]')
+    plt.title('Race Strategy Simulation: Velocity Over Time')
+    plt.grid(True)
+    plt.legend()
+
+
     
-    print("--- Processing Simulation Results in Python ---")
-    if 'error' in simulation_results:
-        print(f"Simulation or processing failed: {simulation_results['error']}")
-    else:
-        # Example: Accessing data if logsout was used
-        if 'logsout' in simulation_results:
-            print("Accessing data from logsout:")
-            for signal_name, signal_values in simulation_results['logsout'].items():
-                print(f"  Signal: {signal_name}")
-                # print(f"    Time points: {signal_values['time'][:5]}...") # Print first 5 time points
-                print(f"    Data points: {signal_values['data'][:5]}...") # Print first 5 data points
-                print(f"    Total data points: {len(signal_values['data'])}")
+    # print("--- Processing Simulation Results in Python ---")
+    # if 'error' in simulation_results:
+    #     print(f"Simulation or processing failed: {simulation_results['error']}")
+    # else:
+    #     # Example: Accessing data if logsout was used
+    #     if 'logsout' in simulation_results:
+    #         print("Accessing data from logsout:")
+    #         for signal_name, signal_values in simulation_results['logsout'].items():
+    #             print(f"  Signal: {signal_name}")
+    #             # print(f"    Time points: {signal_values['time'][:5]}...") # Print first 5 time points
+    #             print(f"    Data points: {signal_values['data'][:5]}...") # Print first 5 data points
+    #             print(f"    Total data points: {len(signal_values['data'])}")
         
-        # Example: Accessing data if yout was used and converted to numpy
-        elif 'yout' in simulation_results and isinstance(simulation_results['yout'], np.ndarray):
-            print("Accessing data from yout (numpy array):")
-            np_yout_data = simulation_results['yout']
-            print(f"  Shape: {np_yout_data.shape}")
-            # Access data based on its structure, e.g., np_yout_data[:, 0] for the first column
+    #     # Example: Accessing data if yout was used and converted to numpy
+    #     elif 'yout' in simulation_results and isinstance(simulation_results['yout'], np.ndarray):
+    #         print("Accessing data from yout (numpy array):")
+    #         np_yout_data = simulation_results['yout']
+    #         print(f"  Shape: {np_yout_data.shape}")
+    #         # Access data based on its structure, e.g., np_yout_data[:, 0] for the first column
         
-        # You can add more logic here to work with the extracted data
+    #     # You can add more logic here to work with the extracted data
         
-    print("--- End Python Processing ---")
+    # print("--- End Python Processing ---")
 
     # #Take note of Input variables
     # input_variables=['soc', 'pack_power', 'air_temp']
@@ -129,6 +165,7 @@ if __name__ == "__main__":
     # df = pd.read_csv("solar_car_telemetry/src/solcast/output.csv")
     # print(df)
 
-    plugin.close_workspace()
+    end_time = time.time()
+    print(f"Finished in {end_time-start_time:.2f} seconds.")
 
-    print("Finished.")
+    plt.show()

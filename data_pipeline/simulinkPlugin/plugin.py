@@ -56,70 +56,34 @@ def retreive_constants():
         print(f"An error occurred: {e}")
 
 def run_simulation():
-    print("Running the Simulation...")
-    # Run the simulation
-    sim_out = eng.sim(model, 'StopTime', str(constants['PROFILE_LENGTH']), nargout=1)
-    
-    # Assign the raw output to the MATLAB workspace variable 'out' (optional, but might be useful for debugging in MATLAB)
-    eng.workspace['out'] = sim_out 
-    
-    print("--- Inspecting Simulation Output from MATLAB Workspace ---")
-    processed_output = {} # Dictionary to hold extracted data
-    try:
-        # Access the 'out' variable directly from the returned object or workspace
-        # Note: sim_out might be the same as eng.workspace['out'] depending on MATLAB Engine behavior
-        matlab_out = eng.workspace['out'] # Or potentially use sim_out directly if it works
+        print("Running the Simulation...")
+        sim_out = eng.sim(model, 'StopTime', str(constants['PROFILE_LENGTH']), nargout=1)
+        eng.workspace['out'] = sim_out
+        print("Simulation Completed.")
 
-        print(f"Type of 'out' in MATLAB workspace: {type(matlab_out)}")
-        
-        # Check for logsout (common for signal logging)
-        if hasattr(matlab_out, 'logsout'):
-            logsout_data = matlab_out.logsout
-            print(f"Found 'logsout': {type(logsout_data)}")
-            signal_names = eng.eval("get(out.logsout,'ElementNames')", nargout=1)
-            print(f"  Logged signal names: {signal_names}")
-            
-            processed_output['logsout'] = {}
-            if signal_names: # Ensure signal_names is not empty
-                 for name in signal_names:
-                    try:
-                        # Access signal data: signal_object.Values.Data
-                        # Access time: signal_object.Values.Time
-                        signal_object = eng.eval(f"out.logsout.get('{name}')", nargout=1)
-                        signal_data = np.array(eng.getProperty(signal_object.Values, 'Data')).flatten().tolist() # Convert to numpy array then list
-                        signal_time = np.array(eng.getProperty(signal_object.Values, 'Time')).flatten().tolist() # Convert to numpy array then list
-                        processed_output['logsout'][name] = {'time': signal_time, 'data': signal_data}
-                        print(f"    Extracted '{name}' (Length: {len(signal_data)})")
-                    except Exception as e:
-                        print(f"    Error extracting data for signal '{name}': {e}")
+        # Extract tout and logsout
+        sim_out = eng.workspace['out']
+        tout = np.array(eng.getfield(sim_out, 'tout'))
+        logsout = eng.getfield(sim_out, 'logsout')
 
-        # Check for yout (common for 'To Workspace' blocks)
-        elif hasattr(matlab_out, 'yout'):
-             yout_data = matlab_out.yout
-             print(f"Found 'yout': {type(yout_data)}")
-             try:
-                 # Attempt conversion to numpy array
-                 np_yout = np.array(yout_data)
-                 processed_output['yout'] = np_yout
-                 print(f"  'yout' converted to numpy array shape: {np_yout.shape}")
-             except Exception as e:
-                 print(f"  Could not convert 'yout' to numpy array: {e}")
-                 processed_output['yout'] = yout_data # Store raw object if conversion fails
+        # Get number of signals
+        num_elements = eng.getfield(logsout, 'numElements')
+        if num_elements == 0:
+            raise ValueError("No signals logged in logsout. Check Simulink model logging settings.")
+        # print(f"Number of signals in logsout: {num_elements}")
 
-        # Add checks for other potential output structures if needed
+        # Extract only the velocity signal (Signal 35)
+        velocity_index = 35  # 1-based indexing for MATLAB
+        velocity_data = eng.eval(f"out.logsout{{{velocity_index}}}.Values.Data")
+        velocity_data = np.array(velocity_data).flatten()  # Ensure 1D array
+        velocity_name = eng.eval(f"out.logsout{{{velocity_index}}}.Name") or "Velocity"
 
-        # Store the raw MATLAB object as well, if desired
-        processed_output['raw_matlab_object'] = sim_out 
+        # Verify data shape
+        if velocity_data.shape[0] != tout.shape[0]:
+            raise ValueError(f"Velocity data length {velocity_data.shape[0]} does not match tout length {tout.shape[0]}.")
 
-    except Exception as e:
-        print(f"Error inspecting or processing output from MATLAB workspace: {e}")
-        processed_output['error'] = str(e)
-        processed_output['raw_matlab_object'] = sim_out # Still return raw object on error
-
-    print("--- End Workspace Inspection ---")
-    
-    # Return the processed dictionary instead of the raw MATLAB object
-    return processed_output
+        # Return tout, velocity signal, and name
+        return tout, velocity_data, velocity_name
 
 def close_workspace():
     # Close the MATLAB engine
