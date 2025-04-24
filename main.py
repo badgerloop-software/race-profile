@@ -58,8 +58,33 @@ if __name__ == "__main__":
 #     print("--- End Debugging ---")
     
     plugin.load_constants()
-    plugin.retreive_constants()
-#     plugin.run_simulation()
+        
+    # Run simulation and get the processed output dictionary
+    simulation_results = plugin.run_simulation() 
+    
+    print("--- Processing Simulation Results in Python ---")
+    if 'error' in simulation_results:
+        print(f"Simulation or processing failed: {simulation_results['error']}")
+    else:
+        # Example: Accessing data if logsout was used
+        if 'logsout' in simulation_results:
+            print("Accessing data from logsout:")
+            for signal_name, signal_values in simulation_results['logsout'].items():
+                print(f"  Signal: {signal_name}")
+                # print(f"    Time points: {signal_values['time'][:5]}...") # Print first 5 time points
+                print(f"    Data points: {signal_values['data'][:5]}...") # Print first 5 data points
+                print(f"    Total data points: {len(signal_values['data'])}")
+        
+        # Example: Accessing data if yout was used and converted to numpy
+        elif 'yout' in simulation_results and isinstance(simulation_results['yout'], np.ndarray):
+            print("Accessing data from yout (numpy array):")
+            np_yout_data = simulation_results['yout']
+            print(f"  Shape: {np_yout_data.shape}")
+            # Access data based on its structure, e.g., np_yout_data[:, 0] for the first column
+        
+        # You can add more logic here to work with the extracted data
+        
+    print("--- End Python Processing ---")
 
     # #Take note of Input variables
     # input_variables=['soc', 'pack_power', 'air_temp']
@@ -103,5 +128,7 @@ if __name__ == "__main__":
 
     # df = pd.read_csv("solar_car_telemetry/src/solcast/output.csv")
     # print(df)
+
+    plugin.close_workspace()
 
     print("Finished.")

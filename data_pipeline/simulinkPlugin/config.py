@@ -39,7 +39,7 @@ constants = {
 # Adding derived constants
 
 constants.update({
-    "CURRENT_TIME": round(datetime.now().second + datetime.now().microsecond / 1_000_000, 4) # Placeholder for current race time
+    "CURRENT_TIME": datetime.now().second + datetime.now().microsecond / 1_000_000 # Placeholder for current race time
 })
 
 # Add constants that depend on previous ones
@@ -53,11 +53,11 @@ constants.update({
     "FINAL_KWH": 0,  # KwH, battery level for variable time run to end
     "CAR_MASS": 447.90 * constants["LBF_TO_KG"],  # data from CarWeightCalc.xlsx
     "DRIVER_MASS": 176 * constants["LBF_TO_KG"],
-    "AIR_DENSITY": 1.2,  # kg m^-3
+    "AIR_DENSITY": matlab.double(1.2),  # kg m^-3
     "FRONTAL_AREA": 1,
-    "DRAG_COEFFICIENT": 0.25,
-    "C_ROLLING_RESISTANCE": 0.0025,
-    "GRAVITY": 9.81,  # gravitational acceleration m s^-2
+    "DRAG_COEFFICIENT": matlab.double(0.25),
+    "C_ROLLING_RESISTANCE": matlab.double(0.0025),
+    "GRAVITY": matlab.double(9.81),  # gravitational acceleration m s^-2
 })
 
 # Add speed to RPM conversion constant (depends on wheel diameter)
@@ -68,7 +68,7 @@ constants.update({
 # Controls
 constants.update({
     #MOTOR_CONSTANT = % CHECK THIS
-    "CONTROL_MODE": 1,   # power-control = 1, speed-control = 0
+    "CONTROL_MODE": matlab.double([[1]]),   # power-control = 1, speed-control = 0
     "TARGET_SPEED": 12,  # Meters / Second
     "ACCEL_TOLERANCE": 1,
     "P_SPEED": 25,    # Speed P
@@ -107,7 +107,7 @@ constants.update({
     "FAN_DRAW": 4.8,  # Watts
     "DRIVER_DISPLAY_DRAW": 2.5,  # Watts
     "HEADLIGHT_DRAW": 2,  # Watts
-    "REGEN_ON": 0,
+    "REGEN_ON": matlab.double([[0]]),
 })
 
 ## Data
@@ -148,8 +148,8 @@ duplicates_bool = course_data_df.iloc[:, 7].diff().eq(0)
 
 # Push boolean arrays into constants (as MATLAB logicals)
 constants.update({
-    "NANS":      matlab.logical(nans_bool.tolist()),
-    "DUPLICATES": matlab.logical(duplicates_bool.tolist()),
+    "NANS": matlab.double([[1 if x else 0] for x in nans_bool.tolist()]),
+    "DUPLICATES": matlab.double([[1 if x else 0] for x in duplicates_bool.tolist()]),
 })
 
 # Filter out those rows
@@ -158,7 +158,7 @@ filtered_df = course_data_df[mask]
 
 # 1) Push the filter mask itself
 constants.update({
-    "COURSE_FILTER": matlab.logical(mask.tolist()),
+    "COURSE_FILTER": matlab.double([[1 if x else 0] for x in mask.tolist()]),
 })
 
 # 2) Compute and push INT_DISTANCES & INT_GRADE_ANGLE
