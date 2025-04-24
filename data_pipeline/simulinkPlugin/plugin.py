@@ -70,9 +70,15 @@ def run_simulation():
         num_elements = eng.getfield(logsout, 'numElements')
         if num_elements == 0:
             raise ValueError("No signals logged in logsout. Check Simulink model logging settings.")
-        # print(f"Number of signals in logsout: {num_elements}")
+        print(f"Number of signals in logsout: {num_elements}")
 
-        # Extract only the velocity signal (Signal 35)
+        # Print signal names and indices
+        print("Signals in logsout:")
+        for i in range(1, int(num_elements) + 1):  # 1-based indexing for MATLAB
+            name = eng.eval(f"out.logsout{{{i}}}.Name") or f"Unnamed Signal {i}"
+            print(f"Index {i}: {name}")
+
+        # Extract the velocity signal (Signal 35)
         velocity_index = 35  # 1-based indexing for MATLAB
         velocity_data = eng.eval(f"out.logsout{{{velocity_index}}}.Values.Data")
         velocity_data = np.array(velocity_data).flatten()  # Ensure 1D array

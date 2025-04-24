@@ -77,7 +77,7 @@ if __name__ == "__main__":
         df = pd.DataFrame(data_to_save)
         
         # Define the output CSV file path
-        output_csv_path = 'Outputs/simulation_velocity_output.csv' 
+        output_csv_path = 'Outputs/simulation_output.csv' 
         
         # Save the DataFrame to CSV, excluding the index column
         df.to_csv(output_csv_path, index=False)
@@ -95,7 +95,7 @@ if __name__ == "__main__":
     plt.title('Race Strategy Simulation: Velocity Over Time')
     plt.grid(True)
     plt.legend()
-
+    plt.savefig('Outputs/simulation_output_graph.png')
 
     
     # print("--- Processing Simulation Results in Python ---")
