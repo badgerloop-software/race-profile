@@ -1,14 +1,14 @@
 # import numpy as np
-import pandas as pd
+# import pandas as pd
 import time
 # import ctypes
 from data_pipeline.simulinkPlugin.config import constants
 import matlab.engine
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 # import logging
 
-# from data_pipeline.dataExtract import extractVars, NearestKeyDict
+from data_pipeline.dataExtract import extractVars, NearestKeyDict
 # from dataProcess import dataProcess as dprocess
 from data_pipeline.simulinkPlugin import plugin
 # from dataProcess import constants as const
@@ -17,120 +17,63 @@ from data_pipeline.simulinkPlugin import plugin
 
 if __name__ == "__main__":
     start_time = time.time()
-#     # logging.basicConfig(
-#     # level=logging.INFO,
-#     # format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-#     # )
-#     # logger = logging.getLogger(__name__)
-#     # logger.info("Initializing...")
 
-#     print("--- Debugging Constants ---")
-#     keys_to_check = [
-#         "MAX_CURRENTS_ECO",
-#         "MAX_CURRENTS_POWER",
-#         "SOLAR_TIME_BREAKPOINTS",
-#         "REGEN_ON"  # Add REGEN_ON to debug output
-#     ]
-    
-#     # Add type checking/conversion before simulation
-#     if "REGEN_ON" in constants:
-#         # Convert to MATLAB logical type if it's not already
-#         if not isinstance(constants["REGEN_ON"], matlab.logical):
-#             constants["REGEN_ON"] = matlab.logical([bool(constants["REGEN_ON"])])
-#     else:
-#         # Set default value if not present
-#         constants["REGEN_ON"] = matlab.logical([False])
+    #Make changes to input parameters here before loading.
 
-#     # Existing debugging code
-#     for key in keys_to_check:
-#         if key in constants:
-#             value = constants[key]
-#             print(f"Key: {key}")
-#             print(f"  Type: {type(value)}")
-#             if isinstance(value, (list, np.ndarray, matlab.double)):
-#                 if isinstance(value, matlab.double):
-#                     print(f"  Value: {value}")
-#                 else:
-#                     print(f"  Length/Shape: {len(value) if isinstance(value, list) else value.shape}")
-#                     print(f"  Sample Value: {value[:5] if isinstance(value, list) else value[:5,:]}")
-#             else:
-#                 print(f"  Value: {value}")
-#         else:
-#             print(f"Key: {key} - NOT FOUND in constants")
-#     print("--- End Debugging ---")
-    
+    # #Take note of Input variables
+    # input_variables=['soc', 'pack_power', 'air_temp']
+
+    #Open Route data into lookup table
+    route = extractVars.open_route()
+
+    # print(route[200000][0]) 
+    # print(route[200000][1])
+
     plugin.load_constants()
-        
-    # Run simulation
-    tout, velocity_data, velocity_name = plugin.run_simulation()
+
+    # Run simulation --- Available Logged Signals (Index: Name) ---
+    # 1: power[kW]
+    # 2: [A]
+    # 3: [V]
+    # 4: Motor Current Draw [A]
+    # 5: Net Power
+    # 6: Pow1
+    # 7: pow2
+    # 8: S.O.C
+    # 9: [Unnamed Signal 9]
+    # 10: [W]
+    # 11: Control Signal [A]
+    # 12: PowerMode
+    # 13: [Unnamed Signal 13]
+    # 14: [Unnamed Signal 14]
+    # 15: [Unnamed Signal 15]
+    # 16: controlPowerSignal
+    # 17: powerError
+    # 18: ControlSpeedSignal
+    # 19: SpeedError
+    # 20: Air Density [kg/m^3]
+    # 21: Irradiance [W/m^2]
+    # 22: Surface Grade
+    # 23: Net Force [N]
+    # 24: brakeForce
+    # 25: Normal Force [N]
+    # 26: Parallel Gravitational Force [N]
+    # 27: Motor Propulsion Force [N]
+    # 28: maxCurrent
+    # 29: Resistive Forces [N]
+    # 30: Drag Force [N]
+    # 31: Rolling Resistance [N]
+    # 32: Solar Power [W]
+    # 33: Acceleration [m/s^2]
+    # 34: Position [m]
+    # 35: Velocity [m/s]
+    # ---------------------------------------------
+    plugin.run_simulation([35, 30, 8])
 
     #Close Workspace
     plugin.close_workspace()
 
-    print(f"Velocity Data Type: {type(velocity_data)}")
-    print(f"Velocity Length: {len(velocity_data)}")
 
-    # --- Save data to CSV ---
-    try:
-        # Create a dictionary for the DataFrame
-        data_to_save = {'Time (s)': tout.flatten(), velocity_name: velocity_data.flatten()}
-        df = pd.DataFrame(data_to_save)
-        
-        # Define the output CSV file path
-        output_csv_path = 'Outputs/simulation_output.csv' 
-        
-        # Save the DataFrame to CSV, excluding the index column
-        df.to_csv(output_csv_path, index=False)
-        print(f"Simulation data saved to {output_csv_path}")
-        
-    except Exception as e:
-        print(f"Error saving data to CSV: {e}")
-    # --- End save data to CSV ---
-
-    # Plot velocity
-    plt.figure()
-    plt.plot(tout, velocity_data, label=velocity_name)
-    plt.xlabel('Time (s)')
-    plt.ylabel('Velocity [m/s]')
-    plt.title('Race Strategy Simulation: Velocity Over Time')
-    plt.grid(True)
-    plt.legend()
-    plt.savefig('Outputs/simulation_output_graph.png')
-
-    
-    # print("--- Processing Simulation Results in Python ---")
-    # if 'error' in simulation_results:
-    #     print(f"Simulation or processing failed: {simulation_results['error']}")
-    # else:
-    #     # Example: Accessing data if logsout was used
-    #     if 'logsout' in simulation_results:
-    #         print("Accessing data from logsout:")
-    #         for signal_name, signal_values in simulation_results['logsout'].items():
-    #             print(f"  Signal: {signal_name}")
-    #             # print(f"    Time points: {signal_values['time'][:5]}...") # Print first 5 time points
-    #             print(f"    Data points: {signal_values['data'][:5]}...") # Print first 5 data points
-    #             print(f"    Total data points: {len(signal_values['data'])}")
-        
-    #     # Example: Accessing data if yout was used and converted to numpy
-    #     elif 'yout' in simulation_results and isinstance(simulation_results['yout'], np.ndarray):
-    #         print("Accessing data from yout (numpy array):")
-    #         np_yout_data = simulation_results['yout']
-    #         print(f"  Shape: {np_yout_data.shape}")
-    #         # Access data based on its structure, e.g., np_yout_data[:, 0] for the first column
-        
-    #     # You can add more logic here to work with the extracted data
-        
-    # print("--- End Python Processing ---")
-
-    # #Take note of Input variables
-    # input_variables=['soc', 'pack_power', 'air_temp']
-    # #Open Route data into lookup table
-    # route = extractVars.open_route()
-    # # print(route)
-
-    # enhanced_route = NearestKeyDict(route)
-    # print(enhanced_route[200000][0]) 
-    # print(enhanced_route[200000][1])
     # #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     # #Run the sumulation and time how long it takes.
     # # Create simulator instance
@@ -167,5 +110,3 @@ if __name__ == "__main__":
 
     end_time = time.time()
     print(f"Finished in {end_time-start_time:.2f} seconds.")
-
-    plt.show()

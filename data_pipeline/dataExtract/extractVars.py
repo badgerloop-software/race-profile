@@ -6,6 +6,7 @@ from datetime import datetime
 import ctypes
 import time
 import numpy as np
+from .NearestKeyDict import NearestKeyDict
 
 r = redis.StrictRedis(host = 'localhost', port = 6379, db = 0, decode_responses=True)
 
@@ -98,7 +99,7 @@ def record_multiple_data(time_seconds=2, sampling_frequency = 0.5, variables=['s
         time.sleep(sampling_frequency)
     return data
 
-def open_route(route_file="data_pipeline/solcast/ASC2022_A.csv"):
+def open_route(route_file="course_data/ASC_2022/ASC2022_A.csv"):
     """
     Opens route data from file to produce dictionary.
 
@@ -120,8 +121,8 @@ def open_route(route_file="data_pipeline/solcast/ASC2022_A.csv"):
             except ValueError:
                 continue
             route_dict[distance_travelled] = (lat, lon)
-    #print(route_dict)
-    return route_dict
+    enhanced_route_dict = NearestKeyDict(route_dict)
+    return enhanced_route_dict
 
 def animate(i, telem_var = 'Var1'):
     try:
