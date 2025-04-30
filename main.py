@@ -9,7 +9,7 @@ import numpy as np
 # import logging
 
 from data_pipeline.dataExtract import extractVars, NearestKeyDict
-# from dataProcess import dataProcess as dprocess
+from data_pipeline.dataProcess import dataProcess
 from data_pipeline.simulinkPlugin import plugin
 # from dataProcess import constants as const
 # from solcast import get_weather_data
@@ -23,13 +23,31 @@ if __name__ == "__main__":
     # #Take note of Input variables
     # input_variables=['soc', 'pack_power', 'air_temp']
 
+    power_extracted = extractVars.get_variable_value('pack_power')
+
+    # power_extracted = extractVars.record_multiple_data(2, 0.5, ['pack_power'])
+    # power_extracted = dataProcess.remove_outliers(power_extraxted)
+    # power_extracted = dataProcess.process_recorded_values(power_extraxted)
+
+    constants.update({
+        "initialguess": power_extracted
+    })
+
+    constants.update({
+        "initialguess": 500
+    })
+
     #Open Route data into lookup table
     route = extractVars.open_route()
 
     # print(route[200000][0]) 
     # print(route[200000][1])
 
+    plugin.start_matlab_engine()
+
     plugin.load_constants()
+
+    plugin.retreive_constants()
 
     # Run simulation --- Available Logged Signals (Index: Name) ---
     # 1: power[kW]
@@ -68,7 +86,9 @@ if __name__ == "__main__":
     # 34: Position [m]
     # 35: Velocity [m/s]
     # ---------------------------------------------
-    plugin.run_simulation([35, 30, 8])
+    # plugin.run_simulation([35, 30, 8])
+    
+    plugin.run_optimization()
 
     #Close Workspace
     plugin.close_workspace()

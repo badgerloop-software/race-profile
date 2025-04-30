@@ -3,10 +3,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from datetime import datetime
-import ctypes
+# import ctypes
 import time
 import numpy as np
 from .NearestKeyDict import NearestKeyDict
+import tkinter as tk
+from tkinter import messagebox
 
 r = redis.StrictRedis(host = 'localhost', port = 6379, db = 0, decode_responses=True)
 
@@ -156,7 +158,7 @@ def animate(i, telem_var = 'Var1'):
         plt.close('all')
 
         #Error Box
-        ctypes.windll.user32.MessageBoxW(0, "Please turn on Data Generator before plotting live data.", "Data Collection Error", 0)
+        # ctypes.windll.user32.MessageBoxW(0, "Please turn on Data Generator before plotting live data.", "Data Collection Error", 0)
         ##  Styles(Last Number):
         ##  0 : OK
         ##  1 : OK | Cancel
@@ -165,6 +167,17 @@ def animate(i, telem_var = 'Var1'):
         ##  4 : Yes | No
         ##  5 : Retry | Cancel 
         ##  6 : Cancel | Try Again | Continue
+
+        root = tk.Tk()
+        root.withdraw()
+
+        def show_error():
+            messagebox.showerror("Data Collection Error", "Please turn on Data Generator before plotting live data.")
+            root.quit()
+        show_error()
+
+        root.mainloop()
+
 
 def launch_live_graph():
     ani = animation.FuncAnimation(fig, animate, interval=1000)

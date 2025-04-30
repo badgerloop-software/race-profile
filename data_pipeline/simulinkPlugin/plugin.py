@@ -4,19 +4,35 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from data_pipeline.simulinkPlugin.config import constants
 
+eng = None
+model = "Car"
+
 import os
 _this = os.path.dirname(__file__)
 project_root = os.path.abspath(os.path.join(_this, os.pardir, os.pardir, os.pardir))
 sim_folder   = os.path.join(project_root, "race-profile", "Simulation")
+model_file = os.path.join(sim_folder, model + ".slx")
 
-# Start the MATLAB engine
-print("Starting MATLAB Engine...")
-eng = matlab.engine.start_matlab()
-eng.addpath(sim_folder, nargout=0)
-model_file = os.path.join(sim_folder, "Car.slx")
-model = "Car"
-eng.load_system(model_file, nargout=0)
-print("MATLAB engine started, Car model loaded.")
+def start_matlab_engine():
+    """Starts the MATLAB engine, adds path, and loads the Simulink model."""
+    global eng # Declare intention to modify the global 'eng' variable
+    if eng is not None:
+        print("MATLAB engine already started.")
+        return True
+
+    try:
+        print("Starting MATLAB Engine...")
+        eng = matlab.engine.start_matlab()
+        print("Adding Simulink model path to MATLAB...")
+        eng.addpath(sim_folder, nargout=0)
+        print(f"Loading Simulink model '{model}' from {model_file}...")
+        eng.load_system(model_file, nargout=0)
+        print("MATLAB engine started, Car model loaded.")
+        return True
+    except Exception as e:
+        print(f"Error starting MATLAB engine or loading model: {e}")
+        eng = None # Ensure eng is None if startup failed
+        return False
 
 def load_constants():
     print("Loading input parameters...")
@@ -219,7 +235,11 @@ def run_simulation(signalsList):
         print(f"Error plotting combined graph: {e}")
 
     # # Return the DataFrame containing the extracted data
-    # return df if 'df' in locals() else None
+    # return df if 'df' in locals() else 
+    
+def run_optimization():
+    print("Running Optimization Script...")
+    return eng.run('Optimization/fminconWrapper.m', nargout=0)
 
 def close_workspace():
     # Close the MATLAB engine
