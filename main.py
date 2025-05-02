@@ -23,15 +23,15 @@ if __name__ == "__main__":
     # #Take note of Input variables
     # input_variables=['soc', 'pack_power', 'air_temp']
 
-    power_extracted = extractVars.get_variable_value('pack_power')
+    # power_extracted = extractVars.get_variable_value('pack_power')
 
     # power_extracted = extractVars.record_multiple_data(2, 0.5, ['pack_power'])
     # power_extracted = dataProcess.remove_outliers(power_extraxted)
     # power_extracted = dataProcess.process_recorded_values(power_extraxted)
 
-    constants.update({
-        "initialguess": power_extracted
-    })
+    # constants.update({
+    #     "initialguess": power_extracted
+    # })
 
     constants.update({
         "initialguess": 500
@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
     plugin.load_constants()
 
-    plugin.retreive_constants()
+    # plugin.retreive_constants()
 
     # Run simulation --- Available Logged Signals (Index: Name) ---
     # 1: power[kW]
@@ -88,7 +88,10 @@ if __name__ == "__main__":
     # ---------------------------------------------
     # plugin.run_simulation([35, 30, 8])
     
-    plugin.run_optimization()
+    maxDistance, optimizedPower = plugin.run_optimization()
+
+    print(f"Max Distance: {maxDistance}")
+    print(f"Optimized Power: {optimizedPower}")
 
     #Close Workspace
     plugin.close_workspace()

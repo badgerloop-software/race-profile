@@ -239,7 +239,10 @@ def run_simulation(signalsList):
     
 def run_optimization():
     print("Running Optimization Script...")
-    return eng.run('Optimization/fminconWrapper.m', nargout=0)
+    eng.run('Optimization/fminconWrapper2.m', nargout=0)
+    maxDistance = eng.eval(f"maxDistance", nargout=1)
+    optimizedPower = eng.eval(f"optimizedPower", nargout=1)
+    return maxDistance, optimizedPower
 
 def close_workspace():
     # Close the MATLAB engine
