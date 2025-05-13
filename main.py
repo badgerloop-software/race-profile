@@ -109,6 +109,12 @@ def _run_matlab_sync():
             # Run optimization
             logger.info("Starting optimization...")
             maxDistance, optimizedPower = plugin.run_optimization()
+
+            api_results[:] = [
+                {"max_distance": "Optimization Running..."},
+                {"optimized_power": "Optimization Running..."}
+            ]
+
             end_optimize = time.time()
             logger.info("Optimization finished in %.2f seconds.", end_optimize - start_optimize)
             logger.info("Max Distance: %s", maxDistance)
