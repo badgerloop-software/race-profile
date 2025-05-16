@@ -19,40 +19,45 @@ logger = logging.getLogger(__name__)
 # We will add event handlers instead of using lifespan directly on init
 app = FastAPI()
 
-# Store results globally
 api_results = [
-    {"max_distance": "Pending..."},
-    {"optimized_power": "Pending..."}
+    {"max_distance": "Initializing...", "status": "starting"},
+    {"optimized_power": "Initializing...", "status": "starting"}
 ]
 
-# --- Define startup/shutdown event functions ---
 async def startup_event():
     """Handles application startup logic."""
     logger.info("--- Startup Event Handler Triggered ---")
-    # Start MATLAB Engine here
-    logger.info("--- Startup Event: Starting MATLAB engine... ---")
-    try:
-        plugin.start_matlab_engine()
-        logger.info("--- Startup Event: MATLAB engine started successfully ---")
-    except Exception as engine_err:
-        logger.error("--- Startup Event: FAILED to start MATLAB engine: %s ---", engine_err, exc_info=True)
-        plugin.eng = None # Ensure plugin.eng is None if start failed
-
-    # Start the optimization task in the background only if engine started
-    if plugin.eng:
-        logger.info("--- Startup Event: Creating background task ---")
-        task = asyncio.create_task(run_optimization_background())
-        # Store task in app state if needed for shutdown cancellation
-        app.state.optimization_task = task
-        logger.info("--- Startup Event: Background task created ---")
-    else:
-        logger.warning("--- Startup Event: Skipping background task creation due to MATLAB engine failure ---")
-        api_results[:] = [
-            {"max_distance": "Engine Error at Startup"},
-            {"optimized_power": "Engine Error at Startup"}
-        ]
+    
+    # Create background task for MATLAB initialization
+    logger.info("--- Startup Event: Creating background initialization task ---")
+    init_task = asyncio.create_task(initialize_matlab())
+    app.state.init_task = init_task
     logger.info("--- Startup Event Handler Finished ---")
 
+async def initialize_matlab():
+    """Handles MATLAB initialization in the background."""
+    logger.info("--- Starting MATLAB initialization in background ---")
+    try:
+        # Start MATLAB Engine
+        plugin.start_matlab_engine()
+        logger.info("--- MATLAB engine started successfully ---")
+        
+        # Update status
+        api_results[0]["status"] = "ready"
+        api_results[1]["status"] = "ready"
+        
+        # Start the optimization task
+        logger.info("--- Creating optimization background task ---")
+        opt_task = asyncio.create_task(run_optimization_background())
+        app.state.optimization_task = opt_task
+        
+    except Exception as engine_err:
+        logger.error("--- MATLAB Engine start failed: %s ---", engine_err, exc_info=True)
+        plugin.eng = None
+        api_results[:] = [
+            {"max_distance": "Engine Error", "status": "error"},
+            {"optimized_power": "Engine Error", "status": "error"}
+        ]
 
 async def shutdown_event():
     """Handles application shutdown logic."""
@@ -86,9 +91,12 @@ app.add_event_handler("shutdown", shutdown_event)
 
 @app.get("/strategy")
 async def strategy_results():
-    """Returns the latest optimization results."""
+    """Return the latest optimization results."""
     logger.info("Serving /strategy endpoint: %s", api_results)
-    return api_results
+    return {
+        "results": api_results,
+        "matlab_ready": plugin.eng is not None
+    }
 
 # --- _run_matlab_sync and run_optimization_background functions remain the same ---
 def _run_matlab_sync():
@@ -161,8 +169,13 @@ async def run_optimization_background():
 
 if __name__ == "__main__":
     logger.info("Starting Uvicorn server...")
-    plugin.eng = None # Ensure engine is None initially
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    plugin.eng = None  # Ensure engine is None initially
+    uvicorn.run(
+        app,
+        host="127.0.0.1",
+        port=8001,
+        log_level="info"
+    )
     # #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     # #Run the sumulation and time how long it takes.
     # # Create simulator instance

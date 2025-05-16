@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from datetime import datetime
-# import ctypes
+import requests
 import time
 import numpy as np
 from .NearestKeyDict import NearestKeyDict
@@ -17,54 +17,40 @@ fig, ax = plt.subplots()
 xs = []  # Store timestamps
 ys = []  # Store Var1 values
 
-def save_variables_pandas(debug = False): 
-    """
-    Reads Variables from Redis and returns it into a Pandas DataFrame
-    """
-    try:
-        keys = r.keys()
-        values = r.mget(keys)
-
-        dataList = []
-        valueList = []
-        for key in keys:           
-            dataList.append(key)
-            valueList.append(values[keys.index(key)])
-            #print(f"{key}")
-            #print(f"{key}, {values[keys.index(key)]}")
-        
-        df = pd.DataFrame({'telem_variables': dataList, 'data': valueList})
-        df = df.sort_values(by=['telem_variables'])        
-        #df.to_csv('solar_car_telemetry/src/telemetry/Data/parameter_list.csv', index=False)
-        if debug != False:
-            print(df)
-        return df
-        
-    except Exception as e:
-        print(e)
-
-# def save_variables_dict(debug=False):
-#     """
-#     Reads Variables from Redis and returns them as a dictionary
-#     """
-#     try:
-#         keys = r.keys()
-#         values = r.mget(keys)
-#         result_dict = {}
-#         for key in keys:
-#             result_dict[key] = values[keys.index(key)]
-#         if debug:
-#             print(result_dict)
-#         return result_dict
-#     except Exception as e:
-#         print(e)
-
 def get_variable_value(variable_name='Var1'):
     try:
         value = r.get(variable_name)
         return value
     except Exception as e:
         print(f"Error retrieving {variable_name}: {e}")
+        return None
+    
+#We should ideally be using the API from the dashboard to get the data instead of going directly through Redis
+def edashboard_extract():
+    url = 'http://localhost:3000/single-values'
+    
+    try:
+        response = requests.get(url)
+        print(f"Status Code: {response.status_code}")
+        print(f"Raw Response: {response.text}")
+        response.raise_for_status()
+
+        data = response.json()
+
+        result = {
+            'timestamp': data['response']['timestamp'],
+            'data_format': data['response']['Dataformat']
+        }
+        
+        return result
+        
+    except requests.RequestException as e:
+        print(f"Error fetching dashboard data: {e}")
+        if hasattr(e, 'response'):
+            print(f"Response content: {e.response.text}")
+        return None
+    except KeyError as e:
+        print(f"Error parsing response data: {e}")
         return None
 
 def record_data(time_seconds = 2, requested = 'Var1'):
@@ -126,6 +112,32 @@ def open_route(route_file="course_data/ASC_2022/ASC2022_A.csv"):
     enhanced_route_dict = NearestKeyDict(route_dict)
     return enhanced_route_dict
 
+def save_variables_pandas(debug = False): 
+    """
+    Reads Variables from Redis and returns it into a Pandas DataFrame
+    """
+    try:
+        keys = r.keys()
+        values = r.mget(keys)
+
+        dataList = []
+        valueList = []
+        for key in keys:           
+            dataList.append(key)
+            valueList.append(values[keys.index(key)])
+            #print(f"{key}")
+            #print(f"{key}, {values[keys.index(key)]}")
+        
+        df = pd.DataFrame({'telem_variables': dataList, 'data': valueList})
+        df = df.sort_values(by=['telem_variables'])        
+        #df.to_csv('solar_car_telemetry/src/telemetry/Data/parameter_list.csv', index=False)
+        if debug != False:
+            print(df)
+        return df
+        
+    except Exception as e:
+        print(e)
+
 def animate(i, telem_var = 'Var1'):
     try:
         global xs, ys
@@ -184,5 +196,8 @@ def launch_live_graph():
     plt.show()
 
 if __name__ == '__main__':
-    currentvars = save_variables_pandas()
-    print(currentvars.loc['data', 'data'])
+    # Example usage
+    dashboard_data = edashboard_extract()
+    if dashboard_data:
+        print(f"Timestamp: {dashboard_data['timestamp']}")
+        print(f"Data Format: {dashboard_data['data_format']}")
