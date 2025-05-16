@@ -128,3 +128,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 slprj
+
+# MATLAB / Simulink files
+Car.slxc
+ASC_Simulation.prj

@@ -1,38 +1,187 @@
-# import numpy as np
-# import pandas as pd
-# import time
-# import ctypes
+from fastapi import FastAPI, BackgroundTasks
+from contextlib import asynccontextmanager
+import uvicorn
+import time
+import logging
 from data_pipeline.simulinkPlugin.config import constants
 import matlab.engine
-# import logging
-
-# from data_pipeline.dataExtract import extractVars, NearestKeyDict
-# from dataProcess import dataProcess as dprocess
+import numpy as np
+from data_pipeline.dataExtract import extractVars, NearestKeyDict
+from data_pipeline.dataProcess import dataProcess
 from data_pipeline.simulinkPlugin import plugin
-# from dataProcess import constants as const
-# from solcast import get_weather_data
+import asyncio
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Define FastAPI app
+# We will add event handlers instead of using lifespan directly on init
+app = FastAPI()
+
+api_results = [
+    {"max_distance": "Initializing...", "status": "starting"},
+    {"optimized_power": "Initializing...", "status": "starting"}
+]
+
+async def startup_event():
+    """Handles application startup logic."""
+    logger.info("--- Startup Event Handler Triggered ---")
+    
+    # Create background task for MATLAB initialization
+    logger.info("--- Startup Event: Creating background initialization task ---")
+    init_task = asyncio.create_task(initialize_matlab())
+    app.state.init_task = init_task
+    logger.info("--- Startup Event Handler Finished ---")
+
+async def initialize_matlab():
+    """Handles MATLAB initialization in the background."""
+    logger.info("--- Starting MATLAB initialization in background ---")
+    try:
+        # Start MATLAB Engine
+        plugin.start_matlab_engine()
+        logger.info("--- MATLAB engine started successfully ---")
+        
+        # Update status
+        api_results[0]["status"] = "ready"
+        api_results[1]["status"] = "ready"
+        
+        # Start the optimization task
+        logger.info("--- Creating optimization background task ---")
+        opt_task = asyncio.create_task(run_optimization_background())
+        app.state.optimization_task = opt_task
+        
+    except Exception as engine_err:
+        logger.error("--- MATLAB Engine start failed: %s ---", engine_err, exc_info=True)
+        plugin.eng = None
+        api_results[:] = [
+            {"max_distance": "Engine Error", "status": "error"},
+            {"optimized_power": "Engine Error", "status": "error"}
+        ]
+
+async def shutdown_event():
+    """Handles application shutdown logic."""
+    logger.info("--- Shutdown Event Handler Triggered ---")
+    # Optional: Add logic to wait for or cancel the task
+    # if hasattr(app.state, 'optimization_task') and not app.state.optimization_task.done():
+    #     logger.info("--- Shutdown Event: Cancelling background task ---")
+    #     app.state.optimization_task.cancel()
+    #     try:
+    #         await app.state.optimization_task
+    #     except asyncio.CancelledError:
+    #         logger.info("--- Shutdown Event: Background task cancelled ---")
+    #     except Exception as e:
+    #         logger.error("--- Shutdown Event: Error during task cancellation/await: %s ---", e)
+
+    logger.info("--- Shutdown Event: Closing MATLAB Engine ---")
+    try:
+        if plugin.eng:
+            plugin.close_workspace()
+            logger.info("--- Shutdown Event: MATLAB Engine Closed ---")
+        else:
+            logger.info("--- Shutdown Event: MATLAB Engine was not running, skipping close ---")
+    except Exception as close_err:
+        logger.error("--- Shutdown Event: Error closing MATLAB Engine: %s ---", close_err, exc_info=True)
+    logger.info("--- Shutdown Event Handler Finished ---")
+
+# Register the event handlers with the app
+app.add_event_handler("startup", startup_event)
+app.add_event_handler("shutdown", shutdown_event)
+
+
+@app.get("/strategy")
+async def strategy_results():
+    """Return the latest optimization results."""
+    logger.info("Serving /strategy endpoint: %s", api_results)
+    return {
+        "results": api_results,
+        "matlab_ready": plugin.eng is not None
+    }
+
+# --- _run_matlab_sync and run_optimization_background functions remain the same ---
+def _run_matlab_sync():
+    """Synchronous function containing the MATLAB optimization logic."""
+    logger.info("--- Starting Synchronous MATLAB Optimization ---")
+    start_time = time.time()
+    global api_results # Ensure we modify the global variable
+
+    # Setup constants
+    constants.update({"initialguess": 500})
+
+    # MATLAB Engine and Optimization
+    if plugin.eng:
+        logger.info("MATLAB engine available, loading constants...")
+        plugin.load_constants()
+        start_optimize = time.time()
+        try:
+            # Run optimization
+            logger.info("Starting optimization...")
+            maxDistance, optimizedPower = plugin.run_optimization()
+
+            api_results[:] = [
+                {"max_distance": "Optimization Running..."},
+                {"optimized_power": "Optimization Running..."}
+            ]
+
+            end_optimize = time.time()
+            logger.info("Optimization finished in %.2f seconds.", end_optimize - start_optimize)
+            logger.info("Max Distance: %s", maxDistance)
+            logger.info("Optimized Power: %s", optimizedPower)
+
+            # Update results
+            api_results[:] = [
+                {"max_distance": maxDistance},
+                {"optimized_power": optimizedPower}
+            ]
+            logger.info("Updated api_results: %s", api_results)
+        except Exception as opt_error:
+            logger.error("Error during optimization: %s", opt_error, exc_info=True)
+            api_results[:] = [
+                {"max_distance": "Error"},
+                {"optimized_power": "Error"}
+            ]
+    else:
+        logger.error("MATLAB engine not available. Skipping optimization.")
+        api_results[:] = [
+            {"max_distance": "Engine Error"},
+            {"optimized_power": "Engine Error"}
+        ]
+
+    end_time = time.time()
+    logger.info("--- Synchronous MATLAB Optimization Completed in %.2f seconds ---", end_time - start_time)
+
+
+async def run_optimization_background():
+    """Runs the MATLAB optimization in a separate thread."""
+    logger.info("--- Entered run_optimization_background ---")
+    try:
+        logger.info("--- Preparing to run _run_matlab_sync in thread ---")
+        await asyncio.to_thread(_run_matlab_sync)
+        logger.info("--- _run_matlab_sync thread finished ---")
+        logger.info("--- Background Optimization Task Finished ---")
+    except Exception as e:
+        logger.error("--- Error in Background Optimization Task: %s ---", e, exc_info=True)
+        api_results[:] = [
+            {"max_distance": "Task Error"},
+            {"optimized_power": "Task Error"}
+        ]
+    logger.info("--- Exiting run_optimization_background ---")
+
+# --- Lifespan context manager is NOT used in this version ---
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     ...
+# app.lifespan = lifespan # This line is removed/commented
 
 if __name__ == "__main__":
-    # logging.basicConfig(
-    # level=logging.INFO,
-    # format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    # )
-    # logger = logging.getLogger(__name__)
-    # logger.info("Initializing...")
-    
-    plugin.load_constants()
-    plugin.retreive_constants()
-
-    # #Take note of Input variables
-    # input_variables=['soc', 'pack_power', 'air_temp']
-    # #Open Route data into lookup table
-    # route = extractVars.open_route()
-    # # print(route)
-
-    # enhanced_route = NearestKeyDict(route)
-    # print(enhanced_route[200000][0]) 
-    # print(enhanced_route[200000][1])
+    logger.info("Starting Uvicorn server...")
+    plugin.eng = None  # Ensure engine is None initially
+    uvicorn.run(
+        app,
+        host="127.0.0.1",
+        port=8001,
+        log_level="info"
+    )
     # #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     # #Run the sumulation and time how long it takes.
     # # Create simulator instance
@@ -66,5 +215,3 @@ if __name__ == "__main__":
 
     # df = pd.read_csv("solar_car_telemetry/src/solcast/output.csv")
     # print(df)
-
-    print("Finished.")

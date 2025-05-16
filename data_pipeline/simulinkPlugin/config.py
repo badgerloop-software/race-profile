@@ -20,7 +20,7 @@ constants = {
     #Constants used for Car Sim
 
     # Non-Configurable Constants
-    "SECONDS_PER_HOUR": 3600,
+    "SECONDS_PER_HOUR": matlab.double(3600),
     "SECONDS_PER_MINUTE": 60,
     "INCH_TO_METER": 0.0254,
     "UNIT_TO_KILO": 1 / 1000,
@@ -39,7 +39,7 @@ constants = {
 # Adding derived constants
 
 constants.update({
-    "CURRENT_TIME": round(datetime.now().second + datetime.now().microsecond / 1_000_000, 4) # Placeholder for current race time
+    "CURRENT_TIME": datetime.now().second + datetime.now().microsecond / 1_000_000 # Placeholder for current race time
 })
 
 # Add constants that depend on previous ones
@@ -53,11 +53,11 @@ constants.update({
     "FINAL_KWH": 0,  # KwH, battery level for variable time run to end
     "CAR_MASS": 447.90 * constants["LBF_TO_KG"],  # data from CarWeightCalc.xlsx
     "DRIVER_MASS": 176 * constants["LBF_TO_KG"],
-    "AIR_DENSITY": 1.2,  # kg m^-3
+    "AIR_DENSITY": matlab.double(1.2),  # kg m^-3
     "FRONTAL_AREA": 1,
-    "DRAG_COEFFICIENT": 0.25,
-    "C_ROLLING_RESISTANCE": 0.0025,
-    "GRAVITY": 9.81,  # gravitational acceleration m s^-2
+    "DRAG_COEFFICIENT": matlab.double(0.25),
+    "C_ROLLING_RESISTANCE": matlab.double(0.0025),
+    "GRAVITY": matlab.double(9.81),  # gravitational acceleration m s^-2
 })
 
 # Add speed to RPM conversion constant (depends on wheel diameter)
@@ -68,7 +68,7 @@ constants.update({
 # Controls
 constants.update({
     #MOTOR_CONSTANT = % CHECK THIS
-    "CONTROL_MODE": 1,   # power-control = 1, speed-control = 0
+    "CONTROL_MODE": matlab.double([[1]]),   # power-control = 1, speed-control = 0
     "TARGET_SPEED": 12,  # Meters / Second
     "ACCEL_TOLERANCE": 1,
     "P_SPEED": 25,    # Speed P
@@ -98,7 +98,7 @@ constants.update({
 
 # More dependent constants
 constants.update({
-    "STARTING_KWH": constants["FULL_PACK_KWH"] * (1 - 0),  # 100% State of Charge
+    "STARTING_KWH": matlab.double(constants["FULL_PACK_KWH"] * (1 - 0)),  # 100% State of Charge
     "TOTAL_MASS": constants["CAR_MASS"] + constants["DRIVER_MASS"],
 })
 
@@ -107,7 +107,7 @@ constants.update({
     "FAN_DRAW": 4.8,  # Watts
     "DRIVER_DISPLAY_DRAW": 2.5,  # Watts
     "HEADLIGHT_DRAW": 2,  # Watts
-    "REGEN_ON": 0,
+    "REGEN_ON": matlab.double([[0]]),
 })
 
 ## Data
@@ -148,8 +148,8 @@ duplicates_bool = course_data_df.iloc[:, 7].diff().eq(0)
 
 # Push boolean arrays into constants (as MATLAB logicals)
 constants.update({
-    "NANS":      matlab.logical(nans_bool.tolist()),
-    "DUPLICATES": matlab.logical(duplicates_bool.tolist()),
+    "NANS": matlab.double([[1 if x else 0] for x in nans_bool.tolist()]),
+    "DUPLICATES": matlab.double([[1 if x else 0] for x in duplicates_bool.tolist()]),
 })
 
 # Filter out those rows
@@ -158,7 +158,7 @@ filtered_df = course_data_df[mask]
 
 # 1) Push the filter mask itself
 constants.update({
-    "COURSE_FILTER": matlab.logical(mask.tolist()),
+    "COURSE_FILTER": matlab.double([[1 if x else 0] for x in mask.tolist()]),
 })
 
 # 2) Compute and push INT_DISTANCES & INT_GRADE_ANGLE
@@ -183,9 +183,20 @@ constants.update({
     "PRESSURE": 500 / constants["UNIT_TO_KILO"],  # Pa
 })
 
-# Solar Data - using lambda for dynamic calculation
+# Solar Data
+start_time = float(constants['START_TIME'])
+end_time = float(constants['END_TIME'])
+interval = 900.0  # 15-minute intervals in seconds
+
+# Generate time points, ensure at least one point
+if end_time <= start_time:
+    solar_time_points = [start_time]
+else:
+    solar_time_points = np.arange(start_time, end_time + interval, interval).tolist()
+
+# Convert to MATLAB format and reshape to 1xN array
 constants.update({
-    "SOLAR_TIME_BREAKPOINTS": np.arange(constants['START_TIME'], constants['END_TIME'] + 1, 900).tolist(),
+    "SOLAR_TIME_BREAKPOINTS": matlab.double([solar_time_points])  # Already in 1xN format
 })
 
 # --- Motor Eco Mode data -----------------------------------------------
@@ -194,63 +205,80 @@ constants.update({
     "ECO_DATA": matlab.double(eco_df.values.tolist())
 })
 
-current_data_eco   = eco_df.iloc[:, 0].astype(float)
-torques_data_eco   = eco_df.iloc[:, 1].astype(float)
-rpm_data_eco       = eco_df.iloc[:, 2].astype(float)
+# Ensure data is properly oriented for MATLAB (1xN arrays)
+current_data_eco = eco_df.iloc[:, 0].astype(float)
+torques_data_eco = eco_df.iloc[:, 1].astype(float)
+rpm_data_eco = eco_df.iloc[:, 2].astype(float)
 
-rpm_breakpoints_eco = rpm_data_eco.iloc[::-1]
-max_currents_eco    = current_data_eco.iloc[::-1]
+rpm_breakpoints_eco = rpm_data_eco.iloc[::-1]  # Reverse order
+max_currents_eco = current_data_eco.iloc[::-1]  # Reverse order
 
 constants.update({
-    "REGEN_ON":               0,
-    "CURRENT_DATA_ECO":       current_data_eco.tolist(),
-    "TORQUES_DATA_ECO":       torques_data_eco.tolist(),
-    "RPM_DATA_ECO":           rpm_data_eco.tolist(),
-    "RPM_BREAKPOINTS_ECO":    rpm_breakpoints_eco.tolist(),
-    "MAX_CURRENTS_ECO":       max_currents_eco.tolist(),
-    "NO_TORQUE_CURRENT_ECO":  float(current_data_eco.iloc[0]),
-    "MIN_CURRENT_ECO":        float(current_data_eco.min()),
-    "MAX_CURRENT_ECO":        float(current_data_eco.max()),
-    "MAX_TORQUE_ECO":         float(torques_data_eco.max()),
-    "MAX_RPM_ECO":            float(rpm_data_eco.max()),
+    "CURRENT_DATA_ECO": matlab.double([current_data_eco.tolist()]),
+    "TORQUES_DATA_ECO": matlab.double([torques_data_eco.tolist()]),
+    "RPM_DATA_ECO": matlab.double([rpm_data_eco.tolist()]),
+    "RPM_BREAKPOINTS_ECO": matlab.double([rpm_breakpoints_eco.tolist()]),
+    "MAX_CURRENTS_ECO": matlab.double([max_currents_eco.tolist()]),
+    "NO_TORQUE_CURRENT_ECO": matlab.double([[float(current_data_eco.iloc[0])]]),  # Wrap in double list for 1x1
+    "MIN_CURRENT_ECO": matlab.double([[float(current_data_eco.min())]]),
+    "MAX_CURRENT_ECO": matlab.double([[float(current_data_eco.max())]]),
+    "MAX_TORQUE_ECO": matlab.double([[float(torques_data_eco.max())]]),
+    "MAX_RPM_ECO": matlab.double([[float(rpm_data_eco.max())]])
 })
 
 # --- Motor Power Mode data ---------------------------------------------
 power_df = pd.read_csv(constants["POWER_DATA_FILE"], header=0)
-constants.update({
-    "POWER_DATA": matlab.double(power_df.values.tolist())
-})
 
-current_data_power   = power_df.iloc[:, 0].astype(float)
-torques_data_power   = (power_df.iloc[:, 1].astype(float) * 2.5)
-rpm_data_power       = power_df.iloc[:, 2].astype(float)
+current_data_power = power_df.iloc[:, 0].astype(float)
+torques_data_power = power_df.iloc[:, 1].astype(float) * 2.5
+rpm_data_power = power_df.iloc[:, 2].astype(float)
 
 rpm_breakpoints_power = rpm_data_power.iloc[::-1]
-max_currents_power    = current_data_power.iloc[::-1]
+max_currents_power = current_data_power.iloc[::-1]
 
 constants.update({
-    "CURRENT_DATA_POWER":       current_data_power.tolist(),
-    "TORQUES_DATA_POWER":       torques_data_power.tolist(),
-    "RPM_DATA_POWER":           rpm_data_power.tolist(),
-    "RPM_BREAKPOINTS_POWER":    rpm_breakpoints_power.tolist(),
-    "MAX_CURRENTS_POWER":       max_currents_power.tolist(),
-    "NO_TORQUE_CURRENT_POWER":  float(current_data_power.iloc[0]),
-    "MIN_CURRENT_POWER":        float(current_data_power.min()),
-    "MAX_CURRENT_POWER":        float(current_data_power.max()),
-    "MAX_TORQUE_POWER":         float(torques_data_power.max()),
-    "MAX_RPM_POWER":            float(rpm_data_power.max()),
+    "CURRENT_DATA_POWER": matlab.double([current_data_power.tolist()]),
+    "TORQUES_DATA_POWER": matlab.double([torques_data_power.tolist()]),
+    "RPM_DATA_POWER": matlab.double([rpm_data_power.tolist()]),
+    "RPM_BREAKPOINTS_POWER": matlab.double([rpm_breakpoints_power.tolist()]),
+    "MAX_CURRENTS_POWER": matlab.double([max_currents_power.tolist()]),
+    "NO_TORQUE_CURRENT_POWER": float(current_data_power.iloc[0]),
+    "MIN_CURRENT_POWER": float(current_data_power.min()),
+    "MAX_CURRENT_POWER": float(current_data_power.max()),
+    "MAX_TORQUE_POWER": float(torques_data_power.max()),
+    "MAX_RPM_POWER": float(rpm_data_power.max()),
 })
 
 # Function to calculate the forecasted irradiance
 def calculate_forecasted_irradiance(time_points, start_time, end_time, profile_length):
+    # Extract numeric values from matlab.double arrays
+    if isinstance(time_points, matlab.double):
+        time_points = time_points.tolist()[0]  # Get first row of matrix
+    if isinstance(start_time, matlab.double):
+        start_time = float(start_time[0][0])
+    if isinstance(end_time, matlab.double):
+        end_time = float(end_time[0][0])
+    if isinstance(profile_length, matlab.double):
+        profile_length = float(profile_length[0][0])
+        
+    # Calculate irradiance profile
     return [-5*((t-start_time)*(t-end_time) / (profile_length/2)**2) for t in time_points]
 
-constants["FORECASTED_IRRADIANCE"] = calculate_forecasted_irradiance(
-    constants["SOLAR_TIME_BREAKPOINTS"], 
-    constants["START_TIME"], 
-    constants["END_TIME"], 
-    constants["PROFILE_LENGTH"]
-)
+# Generate solar time points first
+solar_time_points = np.arange(start_time, end_time + interval, interval).tolist()
+if not solar_time_points:  # Ensure at least one point
+    solar_time_points = [start_time]
+
+# Update constants with both time points and calculated irradiance
+constants.update({
+    "SOLAR_TIME_BREAKPOINTS": matlab.double([solar_time_points]),
+    "FORECASTED_IRRADIANCE": matlab.double([calculate_forecasted_irradiance(
+        solar_time_points,  # Pass Python list instead of matlab.double
+        start_time, 
+        end_time, 
+        constants["PROFILE_LENGTH"]
+    )])
+})
 
 # Output file name
 constants["outputName"] = 'Outputs/results.csv'

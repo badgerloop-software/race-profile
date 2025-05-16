@@ -35,6 +35,9 @@ As mentioned above, our simulation involves a model of the solar car. But that's
 - Interaction among different components of the car subsystem (motor, battery, solar array, etc.) that model their physics and behavior
 - The car's response to external factors like weather, terrain, and race conditions affect the car's performance
 
+![Screenshot](Outputs/rdmegraph.png)
+*Result of Running our Simulation directly from Python*
+
 3. **The Optimizer System**: Our ultimate goal is to have the confidence to tell the driver to drive at a certain speed at a certain location, so that we keep a good balance between battery consumption and distance coverage, while considering physical constraints and weather prediction for the next several hours:
 - **Uses mathematical optimization** (specifically `fmincon` constrained optimization) to find optimal power settings
 - **Maximize distance traveled** by systematically evaluating different power configurations 
