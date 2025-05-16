@@ -3,8 +3,6 @@ Welcome to the GitHub Repository for the Race Strategy Team at Badger Solar Raci
 ## The Goal of Race Strategy
 We are building a solar race car, and we want to drive wisely. Thus came the ultimate mission of the race strategy team: to unlock the car’s full potential by determining the **optimal driving strategy**. We aim to balance speed, battery efficiency, and distance coverage while adapting to real-time conditions like weather and terrain. By combining advanced simulations, data analysis, and physical insights, we empower our driver with precise, actionable guidance to maximize performance and win the race.
 
-![Screenshot](Outputs/rdmegraph.png)
-
 ## Tools for Race Strategy
 
 ### Matlab, Simulink, Python, and Physical Intuitions 
@@ -36,6 +34,9 @@ As mentioned above, our simulation involves a model of the solar car. But that's
 2. **The Simulation System**: The simulation is the foundation of race strategy, built on MATLAB/Simulink. It consists of two main components:
 - Interaction among different components of the car subsystem (motor, battery, solar array, etc.) that model their physics and behavior
 - The car's response to external factors like weather, terrain, and race conditions affect the car's performance
+
+![Screenshot](Outputs/rdmegraph.png)
+*Result of Running our Simulation directly from Python*
 
 3. **The Optimizer System**: Our ultimate goal is to have the confidence to tell the driver to drive at a certain speed at a certain location, so that we keep a good balance between battery consumption and distance coverage, while considering physical constraints and weather prediction for the next several hours:
 - **Uses mathematical optimization** (specifically `fmincon` constrained optimization) to find optimal power settings
